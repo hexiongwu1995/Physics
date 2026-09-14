@@ -1,5 +1,5 @@
-// #import "./itemplate/0.1.2/itemplate.typ": *
-// #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
+#import "./itemplate/0.1.2/itemplate.typ": *
+#show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
 #import "./theoframe/0.4.0/lib.typ": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
@@ -15,14 +15,28 @@
 
 #show math.equation: set block(breakable: true)
 
-
-
 #set text(lang: "zh")
 // #set page(paper: "a4", margin: 2cm)
 // #set heading(numbering: "1.")
 
 
 
+= 电场和电场强度
+
+
+#html.elem(
+  "div",
+  attrs: (
+    style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center",
+    id: "electric-field-wrapper",
+  ),
+  html.elem("canvas", attrs: (id: "electric-field-canvas", style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",)),
+)
+
+#html.script(
+  type: "module",
+  src: "./electric-field.js",
+)
 
 = 静电力计算
 
