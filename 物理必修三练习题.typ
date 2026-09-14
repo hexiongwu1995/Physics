@@ -219,7 +219,7 @@
     kind: "diagram",
     supplement: [图],
   )[
-    #cetz.canvas(length: 4cm, {
+    #cetz.canvas(length: 3cm, {
       import cetz.draw: *
       let O = (0, 0)
       let (p1, p3) = ((-0.5, 0), (0.5, 0.05))
@@ -229,18 +229,18 @@
       content(O, [O], anchor: "south", padding: 5pt)
       content(c, [c], anchor: "east", padding: 5pt)
 
-      // fill:gradient.linear(luma(80%), luma(20%)),
-      // stroke:(bottom:(paint:black, thickness:1pt))
       rect(p1, p3, fill: gradient.linear(dir: ttb, luma(90%), luma(60%)), stroke: none)
       set-style(line: (stroke: (paint: rgb("#048e6098"), dash: "solid")))
       line(O, b1)
       line(O, b2)
       set-style(circle: (
-        fill: gradient.radial(luma(90%), luma(60%)),
-        stroke: (paint: luma(50%), thickness: 1pt, dash: "solid"),
+        fill: gradient.radial(luma(90%), luma(50%)),
+        stroke: (paint: luma(30%), thickness: 1pt, dash: "solid"),
       ))
-      circle(b1, radius: 0.1, name: "ball1")
-      circle(b2, radius: 0.1, name: "ball2")
+      on-layer(-2, {
+        circle(b1, radius: 0.1, name: "ball1")
+        circle(b2, radius: 0.1, name: "ball2")
+      })
       set-style(line: (stroke: black + 1pt))
       line(
         (rel: (0, -0.1), to: "ball1.south"),
@@ -253,10 +253,12 @@
       line((rel: (0, -0.05), to: "distance.end"), (rel: (0, 0.05), to: "distance.end"))
       content("distance", [10cm], anchor: "north", padding: 5pt)
       set-style(line: (stroke: red, mark: (end: (symbol: "stealth", fill: red))))
+
       line(b1, (rel: (-0.25, 0), to: b1), name: "F1")
       line(b2, (rel: (0.25, 0), to: b2), name: "F2")
       content("F1.end", $arrow(F)$, anchor: "east", padding: 5pt)
       content("F2.end", $arrow(F)$, anchor: "west", padding: 5pt)
+
       set-style(
         line: (stroke: (paint: luma(50%), dash: "densely-dotted"), mark: (end: (symbol: "stealth", fill: luma(50%)))),
       )
@@ -266,12 +268,16 @@
       content("y.end", [y], anchor: "south", padding: 5pt)
 
       let b2O-middle = ((b2.at(0) + O.at(0)) / 2, (b2.at(1) + O.at(1)) / 2)
-      line(b2, b2O-middle, name: "Fp", stroke: (dash: "solid"))
+      on-layer(2, {
+        line(b2, b2O-middle, name: "Fp", stroke: (dash: "solid"))
+      })
       content("Fp.end", $arrow(F)_p$, anchor: "east", padding: 5pt)
       let py = (b2.at(0), b2O-middle.at(1))
       let px = (b2O-middle.at(0), b2.at(1))
+
       line(b2, px, name: "Fx")
       line(b2, py, name: "Fy")
+
       content("Fx.end", $arrow(F)_x$, anchor: "north", padding: 5pt)
       content("Fy.end", $arrow(F)_y$, anchor: "west", padding: 5pt)
       set-style(line: (stroke: (paint: luma(50%), dash: "densely-dotted"), mark: none))
@@ -282,7 +288,16 @@
       )
       line(b2, pg, name: "Fg")
       content("Fg.end", $arrow(F)_g$, anchor: "west", padding: 5pt)
-      content(b2, [b], frame: "circle", stroke: none, fill: gradient.radial(luma(90%), luma(60%)), padding: 5pt)
+      on-layer(-1, {
+        content(
+          b2,
+          [b],
+          frame: "circle",
+          stroke: none,
+          fill: gradient.radial(rgb("#eeeeeef1"), rgb("#aaaaaaf1")),
+          padding: 1pt,
+        )
+      })
     })
   ]
 
