@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import {constants} from "../FundamentalPhysicalConstants.js";
+import { constants } from 'fundamental-physical-constants';
 
 const dpi = window.devicePixelRatio;
 const canvas = document.querySelector("#electric-field-canvas");
@@ -27,9 +27,9 @@ const particle2 = new THREE.Mesh(new THREE.SphereGeometry(0.002, 16, 16), new TH
 particle2.position.set(0.06, 0, 0);
 scene.add(particle2);
 
-const electricConstant = constants["vacuum electric permittivity"].value;
+const vacuumElectricPermittivity = constants["vacuum electric permittivity"].value;
 
-const k = 1 / (4 * Math.PI * electricConstant[0]);
+const k = 1 / (4 * Math.PI * vacuumElectricPermittivity);
 const particle1Charge = 4.0e-8;
 const particle2Charge = -1.0e-8;
 const distance = 0.06;
