@@ -1,16 +1,5 @@
 "use strict";
 
-
-
-
-// import { mathjax } from 'mathjax';
-// import { CHTML } from 'mathjax/esm/output/chtml.js';
-// import { AllPackages } from 'mathjax/esm/input/tex/AllPackages.js';
-
-// await MathJax.init({
-//   loader: {load: ['input/asciimath','input/mathml', 'output/chtml', 'ui/menu']}
-// });
-
 function getLevel(heading) {
   return parseInt(heading.tagName[1], 10);
 }

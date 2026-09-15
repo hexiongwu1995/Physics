@@ -1,4 +1,4 @@
-#import "./itemplate/0.1.2/itemplate.typ": *
+#import "./itemplate/0.1.5/itemplate.typ": *
 #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
 #import "./theoframe/0.4.0/lib.typ": *
@@ -313,6 +313,7 @@
       })
     })
   ]
+
 
   #set align(left)
   因为：$F_g = m g$ \
