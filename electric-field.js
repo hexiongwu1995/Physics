@@ -103,7 +103,7 @@ function traceFieldLineFromSurface(stepLength, maxStepLength) {
   }
 }
 
-traceFieldLineFromSurface(0.005, 0.12);
+traceFieldLineFromSurface(0.005, 0.10);
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0.03, 0.1);
