@@ -37,7 +37,8 @@ const distance = 0.06;
 
 const electricForce = k * particle1Charge * particle2Charge / distance ** 2;
 
-textElement.innerHTML = `静电力常数：\` ${k.toExponential(2)} Nm^2C^-2\` <br> 两个电荷之间的静电力：\` ${electricForce.toExponential(2)} N \` `;
+textElement.innerHTML = `静电力常数： ${k.toExponential(2)} N m^2 / C^2 <br> 两个电荷之间的静电力： ${electricForce.toExponential(2)} N `;
+
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0, 0.1);
