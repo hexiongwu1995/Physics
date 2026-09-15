@@ -14,17 +14,17 @@ const canvasHeight = canvas.height;
 
 const scene = new THREE.Scene();
 
-const axesHelper = new THREE.AxesHelper(0.12);
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper(0.12);
+// scene.add(axesHelper);
 
-const gridHelper = new THREE.GridHelper(0.2, 10);
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(0.2, 10);
+// scene.add(gridHelper);
 
-const particle1 = new THREE.Mesh(new THREE.SphereGeometry(0.002, 16, 16), new THREE.MeshBasicMaterial({ color: 0xaaaaaa, opacity: 0.5, transparent: true }));
+const particle1 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshBasicMaterial({ color: 0xaaaaaa, opacity: 0.5, transparent: true }));
 particle1.position.set(0, 0, 0);
 scene.add(particle1);
 
-const particle2 = new THREE.Mesh(new THREE.SphereGeometry(0.002, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
+const particle2 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
 particle2.position.set(0.06, 0, 0);
 scene.add(particle2);
 
@@ -94,7 +94,7 @@ function traceFieldLineFromSurface(stepLength, maxStepLength) {
     while (currentPoint.distanceTo(particle1.position) <= maxStepLength && currentPoint.distanceTo(particle2.position) >= particle2.geometry.parameters.radius) {
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([startPoint.clone(), currentPoint.clone()]), 
-        new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
+        new THREE.LineBasicMaterial({ color: 0x00ff00 }));
       scene.add(line);
       startPoint = currentPoint.clone();
       direction = getSpaceElectricField(startPoint).normalize();
@@ -103,7 +103,7 @@ function traceFieldLineFromSurface(stepLength, maxStepLength) {
   }
 }
 
-traceFieldLineFromSurface(0.001, 0.1);
+traceFieldLineFromSurface(particle2.geometry.parameters.radius, 0.2);
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0.03, 0.1);
