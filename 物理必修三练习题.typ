@@ -31,10 +31,10 @@
   ),
   html.elem("canvas", attrs: (id: "electric-field-canvas", style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",)),
 )
-
+#html.elem("p", attrs:(id: "electric-field-text", style:"white-space: pre-wrap"))
 #html.script(
   type: "module",
-  src: "./electric-field.js",
+  src: "../electric-field.js",
 )
 
 = 静电力计算

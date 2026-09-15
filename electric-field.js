@@ -6,6 +6,7 @@ import { constants } from 'fundamental-physical-constants';
 
 const dpi = window.devicePixelRatio;
 const canvas = document.querySelector("#electric-field-canvas");
+const textElement = document.querySelector("#electric-field-text");
 canvas.width = canvas.clientWidth * dpi;
 canvas.height = canvas.clientHeight * dpi;
 const canvasWidth = canvas.width;
@@ -13,7 +14,7 @@ const canvasHeight = canvas.height;
 
 const scene = new THREE.Scene();
 
-const axesHelper = new THREE.AxesHelper(0.15);
+const axesHelper = new THREE.AxesHelper(0.12);
 scene.add(axesHelper);
 
 const gridHelper = new THREE.GridHelper(0.2, 10);
@@ -35,11 +36,8 @@ const particle2Charge = -1.0e-8;
 const distance = 0.06;
 
 const electricForce = k * particle1Charge * particle2Charge / distance ** 2;
-console.log("静电力常数：",k.toExponential(2))
-console.log("两个电荷之间的静电力：",electricForce.toExponential(2), 'N')
 
-// const aValue = constants["Rydberg constant times hc in J"].value;
-
+textElement.innerHTML = `静电力常数：\` ${k.toExponential(2)} Nm^2C^-2\` <br> 两个电荷之间的静电力：\` ${electricForce.toExponential(2)} N \` `;
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0, 0.1);
