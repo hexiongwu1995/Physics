@@ -3,8 +3,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { constants } from "fundamental-physical-constants";
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import { setGUIinWrapper } from "./three/setting.js";
 
 const dpi = window.devicePixelRatio;
+const canvasWrapper = document.querySelector("#electric-field-wrapper");
 const canvas = document.querySelector("#electric-field-canvas");
 const textElement = document.querySelector("#electric-field-text");
 canvas.width = canvas.clientWidth * dpi;
@@ -120,6 +123,9 @@ const orbitControl = new OrbitControls(camera, canvas);
 orbitControl.target.set(0.03, 0, 0);
 // 设置控制器的目标点
 orbitControl.update();
+
+const gui = new GUI({ container: canvasWrapper});
+setGUIinWrapper(gui, canvasWrapper, orbitControl);
 
 window.addEventListener("resize", () => {
   canvas.width = canvas.clientWidth * dpi;
