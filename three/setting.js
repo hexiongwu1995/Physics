@@ -54,7 +54,7 @@ function obtainMouseCoords(event, canvas, mouseCoords) {
   return mouseCoords;
 }
 
-function setGUIinWrapper(gui, wrapper, orbitControls) {
+function setGUIinWrapper(gui, wrapper, orbitControl) {
   wrapper.style.backgroundColor = "#eeeeee";
 
   let eventObj = {
@@ -78,25 +78,19 @@ function setGUIinWrapper(gui, wrapper, orbitControls) {
   gui.add(eventObj, "ExitFullScreen");
   let folder = gui.addFolder("OrbitControls");
   // folder.close();
-  folder.add(orbitControls, "autoRotate").name("Auto Rotate");
-  folder.add(orbitControls, "autoRotateSpeed", 0.1, 5).name("Auto Rotate Speed");
+  folder.add(orbitControl, "autoRotate").name("Auto Rotate");
+  folder.add(orbitControl, "autoRotateSpeed", 0.1, 5).name("Auto Rotate Speed");
 }
 
-function setRender(renderer, dpr, canvasWidth, canvasHeight) {
-  renderer.setClearColor(0xeeeeee, 1);
-  renderer.setPixelRatio(dpr);
-  renderer.setSize(canvasWidth, canvasHeight, false);
-  // renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  // renderer.setAnimationLoop(animate);
-}
-
-function resetRenderer(canvas, camera, renderer) {
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-  camera.aspect = width / height;
+function onResize(canvas, dpr, camera, renderer){
+  canvas.width = canvas.clientWidth * dpr;
+  canvas.height = canvas.clientHeight * dpr;
+  const canvasWidth = canvas.width;
+  const canvasHeight = canvas.height;
+  camera.aspect = canvasWidth / canvasHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(width, height, false);
+  renderer.setSize(canvasWidth, canvasHeight, false);
 }
 
-export { createGridHelperAndAxesHelper, createLight, createPointLight, setOrbitControls, obtainMouseCoords, setGUIinWrapper, setRender, resetRenderer };
+
+export { createGridHelperAndAxesHelper, createLight, createPointLight, setOrbitControls, obtainMouseCoords, setGUIinWrapper, onResize };

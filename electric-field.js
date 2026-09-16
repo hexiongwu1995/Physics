@@ -4,14 +4,14 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { constants } from "fundamental-physical-constants";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { setGUIinWrapper } from "./three/setting.js";
+import {setGUIinWrapper, onResize } from "./three/setting.js";
 
-const dpi = window.devicePixelRatio;
+const dpr = window.devicePixelRatio;
 const canvasWrapper = document.querySelector("#electric-field-wrapper");
 const canvas = document.querySelector("#electric-field-canvas");
 const textElement = document.querySelector("#electric-field-text");
-canvas.width = canvas.clientWidth * dpi;
-canvas.height = canvas.clientHeight * dpi;
+canvas.width = canvas.clientWidth * dpr;
+canvas.height = canvas.clientHeight * dpr;
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 
@@ -127,15 +127,18 @@ orbitControl.update();
 const gui = new GUI({ container: canvasWrapper});
 setGUIinWrapper(gui, canvasWrapper, orbitControl);
 
+
+
 window.addEventListener("resize", () => {
-  canvas.width = canvas.clientWidth * dpi;
-  canvas.height = canvas.clientHeight * dpi;
-  const canvasWidth = canvas.width;
-  const canvasHeight = canvas.height;
-  camera.aspect = canvasWidth / canvasHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(canvasWidth, canvasHeight, false);
+  onResize(canvas, dpr, camera, renderer);
 });
+
+// 监听元素全屏变化
+document.addEventListener("fullscreenchange", () => {
+  // 稍微延迟，确保全屏样式已应用
+  setTimeout(() => onResize(canvas, dpr, camera, renderer), 100);
+});
+
 
 function animate() {
   orbitControl.update();
