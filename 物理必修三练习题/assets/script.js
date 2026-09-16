@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 function getLevel(heading) {
   return parseInt(heading.tagName[1], 10);
 }

@@ -160,7 +160,8 @@ function animate(currentTime) {
   renderer.render(scene, camera);
 }
 
-// 使用 Intersection Observer 监听可见性
+// 方案一：在每个独立的动画文件中使用 Intersection Observer 监听可见性
+
 const observer = new IntersectionObserver(
   (entries) => {
     // const entry = entries[0];
@@ -197,3 +198,6 @@ const observer = new IntersectionObserver(
 
 // 开始观察 canvasWrapper
 observer.observe(canvasWrapper);
+
+/*方案二： 在script.js中统一管理所有动画的可见性和启停。
+问题：IntersectionObserver 只能观察 DOM 元素，但无法直接控制另一个文件中的 requestAnimationFrame 循环。需要跨文件通信才能统一管理所有 three-animation 元素的可见性，而且同样需要在每个动画文件中通过isIntersecting和isVisible控制动画启停。这是更加复杂的方案，因为逻辑拆分在多个文件中，难以理解。*/
