@@ -141,12 +141,11 @@ const targetFPS = 10;
 const frameInterval = 1000 / targetFPS;
 let lastFrameTime = 0;
 
-let animationId = null;  // 保存 requestAnimationFrame 的 ID
-let isVisible = true;    // 标记元素是否可见
-
+let animationId = null; // 保存 requestAnimationFrame 的 ID
+let isVisible = false; // 标记元素是否可见
 
 function animate(currentTime) {
- animationId = requestAnimationFrame(animate);
+  animationId = requestAnimationFrame(animate);
 
   const deltaTime = currentTime - lastFrameTime;
   if (deltaTime < frameInterval) return;
@@ -161,34 +160,40 @@ function animate(currentTime) {
   renderer.render(scene, camera);
 }
 
-animationId = requestAnimationFrame(animate);
-
-
 // 使用 Intersection Observer 监听可见性
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      // 元素进入可视区域，恢复动画
-      if (!isVisible) {
-        isVisible = true;
-        lastFrameTime = performance.now(); // 重置时间，避免跳帧
-        animationId = requestAnimationFrame(animate);
-      }
-    } else {
-      // 元素离开可视区域，停止动画
-      if (isVisible) {
-        isVisible = false;
-        if (animationId !== null) {
-          cancelAnimationFrame(animationId);
-          animationId = null;
+const observer = new IntersectionObserver(
+  (entries) => {
+    // const entry = entries[0];
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // 元素进入可视区域，恢复动画
+        if (!isVisible) {
+          // 只有之前不可见时才恢复
+          isVisible = true;
+          lastFrameTime = performance.now(); // 重置时间，避免跳帧
+          animationId = requestAnimationFrame(animate);
+        }
+      } else {
+        // 元素离开可视区域，停止动画
+        if (isVisible) {
+          // 只有之前可见时才停止
+          isVisible = false;
+          if (animationId !== null) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
         }
       }
-    }
-  });
-}, {
-  threshold: 0 // 当元素有任何部分不可见时触发
-});
+    });
+  },
+  {
+    root: null, // 默认为视口
+    rootMargin: "10px", // 表示视口外10px触发可见
+    threshold: 0,  // 观察的阈值
+    // 阈值为0表示当元素开始进入视口时触发可见，当元素完全离开视口时触发不可见
+    // 进入视口时运行一次回调函数，离开视口时再运行一次回调函数，中间过程不运行回调函数
+  },
+);
 
 // 开始观察 canvasWrapper
 observer.observe(canvasWrapper);
-
