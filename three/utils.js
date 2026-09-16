@@ -1,7 +1,5 @@
 import * as THREE from "three";
 
-
-
 function sphCoords(radius, phi,  theta) {
  return new THREE.Vector3().setFromSphericalCoords(radius, phi, theta);
 }

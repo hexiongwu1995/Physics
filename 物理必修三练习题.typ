@@ -27,6 +27,7 @@
   attrs: (
     style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
     id: "electric-field-wrapper",
+    class: "three-animation",
   ),
   html.elem("canvas", attrs: (id: "electric-field-canvas", style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",)),
 )

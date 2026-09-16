@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { constants } from "fundamental-physical-constants";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import {setGUIinWrapper, onResize } from "./three/setting.js";
+import { setGUIinWrapper, onResize } from "./three/setting.js";
 
 const dpr = window.devicePixelRatio;
 const canvasWrapper = document.querySelector("#electric-field-wrapper");
@@ -74,14 +74,16 @@ function getSpaceElectricField(point) {
   const field = new THREE.Vector3();
   // 来自particle1的电场
   const distance1 = point.distanceTo(particle1.position);
-  const filed1 = point.clone()
+  const filed1 = point
+    .clone()
     .sub(particle1.position)
     .normalize()
     .multiplyScalar((k * particle1Charge) / distance1 ** 2);
   field.add(filed1);
   // 来自particle2的电场
   const distance2 = point.distanceTo(particle2.position);
-  const filed2 = point.clone()
+  const filed2 = point
+    .clone()
     .sub(particle2.position)
     .normalize()
     .multiplyScalar((k * particle2Charge) / distance2 ** 2);
@@ -95,9 +97,7 @@ function traceFieldLineFromSurface(stepLength, maxStepLength) {
     let direction = getSpaceElectricField(startPoint).normalize();
     let currentPoint = startPoint.clone().add(direction.multiplyScalar(stepLength));
     while (currentPoint.distanceTo(particle1.position) <= maxStepLength && currentPoint.distanceTo(particle2.position) >= particle2.geometry.parameters.radius) {
-      const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([startPoint.clone(), currentPoint.clone()]), 
-        new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([startPoint.clone(), currentPoint.clone()]), new THREE.LineBasicMaterial({ color: 0x00ff00 }));
       scene.add(line);
       startPoint = currentPoint.clone();
       direction = getSpaceElectricField(startPoint).normalize();
@@ -124,10 +124,8 @@ orbitControl.target.set(0.03, 0, 0);
 // 设置控制器的目标点
 orbitControl.update();
 
-const gui = new GUI({ container: canvasWrapper});
+const gui = new GUI({ container: canvasWrapper });
 setGUIinWrapper(gui, canvasWrapper, orbitControl);
-
-
 
 window.addEventListener("resize", () => {
   onResize(canvas, dpr, camera, renderer);
@@ -139,11 +137,58 @@ document.addEventListener("fullscreenchange", () => {
   setTimeout(() => onResize(canvas, dpr, camera, renderer), 100);
 });
 
+const targetFPS = 10;
+const frameInterval = 1000 / targetFPS;
+let lastFrameTime = 0;
 
-function animate() {
+let animationId = null;  // 保存 requestAnimationFrame 的 ID
+let isVisible = true;    // 标记元素是否可见
+
+
+function animate(currentTime) {
+ animationId = requestAnimationFrame(animate);
+
+  const deltaTime = currentTime - lastFrameTime;
+  if (deltaTime < frameInterval) return;
+  console.log(currentTime);
+
+  lastFrameTime = currentTime - (deltaTime % frameInterval);
+  // 将 lastFrameTime 对齐到理论帧时间点（frameInterval的整数倍）
+  // 避免因帧率波动导致的渲染时间点漂移
+  // 长效果：长期保持平均 21 FPS，避免误差累积
+
   orbitControl.update();
   renderer.render(scene, camera);
-  requestAnimationFrame(animate);
 }
 
-animate();
+animationId = requestAnimationFrame(animate);
+
+
+// 使用 Intersection Observer 监听可见性
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      // 元素进入可视区域，恢复动画
+      if (!isVisible) {
+        isVisible = true;
+        lastFrameTime = performance.now(); // 重置时间，避免跳帧
+        animationId = requestAnimationFrame(animate);
+      }
+    } else {
+      // 元素离开可视区域，停止动画
+      if (isVisible) {
+        isVisible = false;
+        if (animationId !== null) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      }
+    }
+  });
+}, {
+  threshold: 0 // 当元素有任何部分不可见时触发
+});
+
+// 开始观察 canvasWrapper
+observer.observe(canvasWrapper);
+
