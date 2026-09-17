@@ -23,9 +23,7 @@ const scene = new THREE.Scene();
 // const gridHelper = new THREE.GridHelper(0.2, 10);
 // scene.add(gridHelper);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight.position.set(1, 1, 1);
-scene.add(directionalLight);
+
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -42,16 +40,16 @@ const vacuumElectricPermittivity = constants["vacuum electric permittivity"].val
 
 const k = 1 / (4 * Math.PI * vacuumElectricPermittivity);
 const particle1Charge = 4.0e-8;
-const particle2Charge = -3e-8;
+const particle2Charge = -1.0e-8;
 const distance = 0.06;
 
 const electricForce = (k * particle1Charge * particle2Charge) / distance ** 2;
 
 // textElement.innerHTML = `静电力常数： ${k.toExponential(2)} N m^2 / C^2 <br> 两个电荷之间的静电力： ${electricForce.toExponential(2)} N `;
 
-// 生成球面采样点
-function generateParticleSurfacePoints(particle, options={}) {
-  const { phiSegments = 10, thetaSegments = 10 } = options;
+// 以y轴为极轴生成球面采样点
+function generateParticleSurfacePoints(particle, options = {}) {
+  const { phiSegments = 15, thetaSegments = 10 } = options;
   let surfacePoints = [];
   const radius = particle.geometry.parameters.radius;
   for (let i = 0; i <= phiSegments; i++) {
@@ -59,37 +57,43 @@ function generateParticleSurfacePoints(particle, options={}) {
       let phi = (i * Math.PI) / phiSegments;
       let theta = (j * 2 * Math.PI) / thetaSegments;
       let surfacePoint = new THREE.Vector3();
-      surfacePoint.setFromSphericalCoords(radius, phi, theta).add(particle.position);
+      surfacePoint.setFromSphericalCoords(radius, phi, theta).applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2).add(particle.position);
       surfacePoints.push(surfacePoint);
     }
   }
   return surfacePoints;
 }
 
-// 生成更均匀的球面采样点（斐波那契采样或修正的经纬度采样）
-// function generateParticleSurfacePoints(particle, options = {}) {
-//   const { numPoints = 50 } = options;
+// 以x轴为极轴生成球面采样点
+// function generateParticleSurfacePoints(particle, xdivisions = 5, angledivisions = 10){
 //   let surfacePoints = [];
-//   const radius = particle.geometry.parameters.radius;
-  
-//   // 使用斐波那契球面采样，分布更均匀
-//   const phi = Math.PI * (3 - Math.sqrt(5)); // 黄金角
-  
-//   for (let i = 0; i < numPoints; i++) {
-//     const y = 1 - (i / (numPoints - 1)) * 2; // y 从 1 到 -1
-//     const radiusAtY = Math.sqrt(1 - y * y);
-//     const theta = phi * i;
-    
-//     const x = Math.cos(theta) * radiusAtY;
-//     const z = Math.sin(theta) * radiusAtY;
-    
-//     let surfacePoint = new THREE.Vector3(x, y, z)
-//       .multiplyScalar(radius)
-//       .add(particle.position);
-//     surfacePoints.push(surfacePoint);
+//   const sphereRadius = particle.geometry.parameters.radius;
+//   for (let i = 0; i <= 2 * xdivisions; i++){
+//     let x = (i - xdivisions)/ xdivisions * sphereRadius;
+//     for (let j=0; j<= angledivisions; j++){
+//       let circleRadius = Math.sqrt(sphereRadius ** 2 - x ** 2);
+//       let angle = j / angledivisions * 2 * Math.PI;
+//       let y = circleRadius * Math.cos(angle);
+//       let z = circleRadius * Math.sin(angle);
+//       let surfacePoint = new THREE.Vector3();
+//       surfacePoint.set(x, y, z).add(particle.position);
+//       surfacePoints.push(surfacePoint);
+//     }
 //   }
 //   return surfacePoints;
 // }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function getParticleElectricField(particle, particleCharge, position) {
@@ -111,35 +115,68 @@ function getSpaceElectricField(position) {
   return field;
 }
 
-function traceFieldLineFromParticle(particle, particleCharge, phiSegments, thetaSegments,color, otherParticles, stepLength, stepNum) {
-let particleSurfacePoints = generateParticleSurfacePoints(particle, {
-  phiSegments: phiSegments,
-  thetaSegments: thetaSegments,
-});
+let fieldLines = [];
+
+function traceFieldLineFromParticle(particle, particleCharge, phiSegments, thetaSegments, color, otherParticles, stepLength, maxLength) {
+  let particleSurfacePoints = generateParticleSurfacePoints(particle);
+
   for (let i = 0; i < particleSurfacePoints.length; i++) {
+    let fieldLine = [];
     let startPoint = particleSurfacePoints[i].clone();
+    fieldLine.push(startPoint);
     let drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
     let currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(stepLength));
-    let stepCount = 0;
 
-    while (!(stepCount >= stepNum || currentPoint.distanceTo(otherParticles.position) <= otherParticles.geometry.parameters.radius)) {
-      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([startPoint.clone(), currentPoint.clone()]), new THREE.LineBasicMaterial({ color: color }));
-      scene.add(line);
+    while (!(currentPoint.distanceTo(particle.position) >= maxLength || currentPoint.distanceTo(otherParticles.position) <= otherParticles.geometry.parameters.radius)) {
       startPoint = currentPoint.clone();
+      fieldLine.push(startPoint);
       drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
       currentPoint = currentPoint.clone().add(drawDirection.multiplyScalar(stepLength));
-      stepCount++;
     }
+    fieldLine.push(currentPoint);
+    fieldLines.push(fieldLine);
   }
 }
 
-traceFieldLineFromParticle(particle1,particle1Charge, 10, 10, 0xff0000, particle2, 0.002, 100);
-// traceFieldLineFromParticle(particle2, particle2Charge, 6, 6, 0x00ff00, particle1, 0.002, 200);
+traceFieldLineFromParticle(particle1, particle1Charge, 8, 8, 0xff0000, particle2, 0.002, 0.20);
+// traceFieldLineFromParticle(particle2, particle2Charge, 8, 8, 0x00ff00, particle1, 0.002, 0.1);
+
+
+fieldLines.forEach(fieldLine => {
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(fieldLine);
+  const lineMaterial = new THREE.LineBasicMaterial({color: 0xaaaaaa})
+
+  const line = new THREE.Line(lineGeometry, lineMaterial);
+  scene.add(line);
+  const arrayLength = fieldLine.length;
+  const middleIndex = Math.floor(arrayLength / 2);
+  const direction = fieldLine[middleIndex].clone().sub(fieldLine[middleIndex - 1]).normalize();
+
+  const coneGeometry = new THREE.ConeGeometry(0.0005, 0.002, 10);
+  const coneMaterial = new THREE.MeshStandardMaterial({
+    color: 0xbbbbbb,
+    roughness: 0.1,
+    metalness: 0.1,
+  });
+  const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+  const up = new THREE.Vector3(0, 1, 0);
+  const quaternion = new THREE.Quaternion().setFromUnitVectors(up, direction);
+  cone.setRotationFromQuaternion(quaternion);
+  cone.position.set(fieldLine[middleIndex].x, fieldLine[middleIndex].y, fieldLine[middleIndex].z);
+  scene.add(cone);
+})
+
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0.03, 0.1);
 // camera.lookAt(0.03, 0, 0);
 scene.add(camera);
+
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+directionalLight.position.set(camera.position);
+scene.add(directionalLight);
+
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setClearColor(0xfafafa, 1);
