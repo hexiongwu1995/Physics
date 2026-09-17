@@ -1,4 +1,10 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { constants } from "fundamental-physical-constants";
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+
+let dpr, canvasWidth, canvasHeight, scene, camera, renderer, orbitControl, gui, targetFPS, frameInterval, lastFrameTime, animationId, isVisible, observer;
+
 
 function createGridHelperAndAxesHelper(scene) {
   const gridHelper = new THREE.GridHelper(2, 20, 0xeeeeee, 0xeeeeee);
@@ -54,12 +60,12 @@ function obtainMouseCoords(event, canvas, mouseCoords) {
   return mouseCoords;
 }
 
-function setGUIinWrapper(gui, wrapper, orbitControl) {
-  wrapper.style.backgroundColor = "#eeeeee";
+function setGUIinWrapper(gui, canvasWrapper, orbitControl) {
+  canvasWrapper.style.backgroundColor = "#eeeeee";
 
   let eventObj = {
     FullScreen: function () {
-      wrapper.requestFullscreen();
+      canvasWrapper.requestFullscreen();
       console.log("FullScreen mode enabled");
     },
     ExitFullScreen: function () {

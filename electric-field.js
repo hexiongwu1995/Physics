@@ -1,4 +1,5 @@
 // 绘制电场线，模拟两个点电荷在空间产生的电场
+let dpr, canvasWidth, canvasHeight, scene, camera, renderer, ambientLight, pointLight, orbitControl, gui, targetFPS, frameInterval, lastFrameTime, animationId, isVisible, observer;
 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -6,16 +7,138 @@ import { constants } from "fundamental-physical-constants";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { setGUIinWrapper, onResize } from "./three/setting.js";
 
-const dpr = window.devicePixelRatio;
 const canvasWrapper = document.querySelector("#electric-field-wrapper");
 const canvas = document.querySelector("#electric-field-canvas");
-const textElement = document.querySelector("#electric-field-text");
-canvas.width = canvas.clientWidth * dpr;
-canvas.height = canvas.clientHeight * dpr;
-const canvasWidth = canvas.width;
-const canvasHeight = canvas.height;
 
-const scene = new THREE.Scene();
+function setCanvasSize() {
+  dpr = window.devicePixelRatio;
+  canvas.width = canvas.clientWidth * dpr;
+  canvas.height = canvas.clientHeight * dpr;
+  canvasWidth = canvas.width;
+  canvasHeight = canvas.height;
+}
+
+function createScene(){
+  scene = new THREE.Scene();
+}
+
+function createCamera() {
+  camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 100);
+  scene.add(camera);
+}
+
+function createAmbientLight(){
+  ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+  scene.add(ambientLight);
+}
+
+function createPointLight() {
+  pointLight = new THREE.PointLight(0xffffff, 0.005, 0.2);
+  scene.add(pointLight);
+  pointLight.position.copy(camera.position);
+}
+
+function createRenderer() {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setClearColor(0xfafafa, 1);
+  renderer.setSize(canvasWidth, canvasHeight, false);
+  renderer.render(scene, camera);
+}
+
+function createOrbitControl() {
+  orbitControl = new OrbitControls(camera, canvas);
+}
+
+function createGUI() {
+  gui = new GUI({ container: canvasWrapper });
+  setGUIinWrapper(gui, canvasWrapper, orbitControl);
+}
+
+function setAnimationInfo() {
+  targetFPS = 10;
+  frameInterval = 1000 / targetFPS;
+  lastFrameTime = 0;
+  animationId = null;
+  isVisible = false;
+}
+
+function animate(currentTime) {
+  animationId = requestAnimationFrame(animate);
+
+  const deltaTime = currentTime - lastFrameTime;
+  if (deltaTime < frameInterval) return;
+
+  lastFrameTime = currentTime - (deltaTime % frameInterval);
+  // 将 lastFrameTime 对齐到理论帧时间点（frameInterval的整数倍）
+  // 避免因帧率波动导致的渲染时间点漂移
+  // 效果：长期保持平均 targetFPS，避免误差累积
+
+  orbitControl.update();
+  pointLight.position.copy(camera.position);
+  renderer.render(scene, camera);
+}
+
+// 方案一：在每个独立的动画文件中使用 Intersection Observer 监听可见性
+function createObserver(){
+  observer = new IntersectionObserver(
+    (entries) => {
+      // const entry = entries[0];
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // 元素进入可视区域，恢复动画
+          if (!isVisible) {
+            // 只有之前不可见时才恢复
+            isVisible = true;
+            lastFrameTime = performance.now(); // 重置时间，避免跳帧
+            animationId = requestAnimationFrame(animate);
+          }
+        } else {
+          // 元素离开可视区域，停止动画
+          if (isVisible) {
+            // 只有之前可见时才停止
+            isVisible = false;
+            if (animationId !== null) {
+              cancelAnimationFrame(animationId);
+              animationId = null;
+            }
+          }
+        }
+      });
+    },
+    {
+      root: null, // 默认为视口
+      rootMargin: "1px", // 表示视口外1px触发可见
+      threshold: 0, // 观察的阈值
+      // 阈值为0表示当元素开始进入视口时触发可见，当元素完全离开视口时触发不可见
+      // 开始进入视口时运行一次回调函数，完全离开视口时再运行一次回调函数，中间过程不运行回调函数
+    },
+  );
+  // 开始观察 canvasWrapper
+  observer.observe(canvasWrapper);
+}
+
+
+setCanvasSize();
+createScene();
+createCamera();
+camera.position.set(0.03, 0.03, 0.1);
+// camera.lookAt(0.03, 0, 0);
+createAmbientLight();
+createPointLight();
+createRenderer();
+createOrbitControl();
+orbitControl.target.set(0.03, 0, 0);
+orbitControl.update();
+createGUI();
+setAnimationInfo();
+
+window.addEventListener("resize", () => {
+  onResize(canvas, dpr, camera, renderer);
+});
+
+document.addEventListener("fullscreenchange", () => {
+  setTimeout(() => onResize(canvas, dpr, camera, renderer), 100);
+});
 
 // const axesHelper = new THREE.AxesHelper(0.12);
 // scene.add(axesHelper);
@@ -23,8 +146,8 @@ const scene = new THREE.Scene();
 // const gridHelper = new THREE.GridHelper(0.2, 10);
 // scene.add(gridHelper);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-scene.add(ambientLight);
+
+
 
 const particle1 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshStandardMaterial({ color: 0xff0000, opacity: 1, transparent: true }));
 particle1.position.set(0, 0, 0);
@@ -156,98 +279,6 @@ fieldLines.forEach((fieldLine) => {
   scene.add(cone);
 });
 
-const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
-camera.position.set(0.03, 0.03, 0.1);
-// camera.lookAt(0.03, 0, 0);
-scene.add(camera);
 
-const pointLight = new THREE.PointLight(0xffffff, 0.005, 0.2);
-pointLight.position.copy(camera.position);
-scene.add(pointLight);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setClearColor(0xfafafa, 1);
-renderer.setSize(canvasWidth, canvasHeight, false);
-renderer.render(scene, camera);
-
-const orbitControl = new OrbitControls(camera, canvas);
-// console.log(renderer.domElement);
-orbitControl.target.set(0.03, 0, 0);
-// 设置控制器的目标点
-orbitControl.update();
-
-const gui = new GUI({ container: canvasWrapper });
-setGUIinWrapper(gui, canvasWrapper, orbitControl);
-
-window.addEventListener("resize", () => {
-  onResize(canvas, dpr, camera, renderer);
-});
-
-// 监听元素全屏变化
-document.addEventListener("fullscreenchange", () => {
-  // 稍微延迟，确保全屏样式已应用
-  setTimeout(() => onResize(canvas, dpr, camera, renderer), 100);
-});
-
-const targetFPS = 10;
-const frameInterval = 1000 / targetFPS;
-let lastFrameTime = 0;
-
-let animationId = null; // 保存 requestAnimationFrame 的 ID
-let isVisible = false; // 标记元素是否可见
-
-function animate(currentTime) {
-  animationId = requestAnimationFrame(animate);
-
-  const deltaTime = currentTime - lastFrameTime;
-  if (deltaTime < frameInterval) return;
-  // console.log(currentTime);
-
-  lastFrameTime = currentTime - (deltaTime % frameInterval);
-  // 将 lastFrameTime 对齐到理论帧时间点（frameInterval的整数倍）
-  // 避免因帧率波动导致的渲染时间点漂移
-  // 长效果：长期保持平均 21 FPS，避免误差累积
-
-  orbitControl.update();
-  pointLight.position.copy(camera.position);
-  renderer.render(scene, camera);
-}
-
-// 方案一：在每个独立的动画文件中使用 Intersection Observer 监听可见性
-
-const observer = new IntersectionObserver(
-  (entries) => {
-    // const entry = entries[0];
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        // 元素进入可视区域，恢复动画
-        if (!isVisible) {
-          // 只有之前不可见时才恢复
-          isVisible = true;
-          lastFrameTime = performance.now(); // 重置时间，避免跳帧
-          animationId = requestAnimationFrame(animate);
-        }
-      } else {
-        // 元素离开可视区域，停止动画
-        if (isVisible) {
-          // 只有之前可见时才停止
-          isVisible = false;
-          if (animationId !== null) {
-            cancelAnimationFrame(animationId);
-            animationId = null;
-          }
-        }
-      }
-    });
-  },
-  {
-    root: null, // 默认为视口
-    rootMargin: "10px", // 表示视口外10px触发可见
-    threshold: 0, // 观察的阈值
-    // 阈值为0表示当元素开始进入视口时触发可见，当元素完全离开视口时触发不可见
-    // 进入视口时运行一次回调函数，离开视口时再运行一次回调函数，中间过程不运行回调函数
-  },
-);
-
-// 开始观察 canvasWrapper
-observer.observe(canvasWrapper);
+createObserver();
