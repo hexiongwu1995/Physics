@@ -21,7 +21,6 @@
 
 = 电场和电场强度
 
-
 #html.elem(
   "div",
   attrs: (
@@ -117,7 +116,7 @@
   #let coulomb-constant = 1 / (4 * calc.pi * vacuum-electric-permittivity.val)
   #let F = coulomb-constant * Q * Q / calc.pow(r, 2)
   $
-    |arrow(F)_(13)| = |arrow(F)_(23)| & = k_e Q^2 / r^2 \
+    norm(arrow(F)_(13)) = norm(arrow(F)_(23)) & = k_e Q^2 / r^2 \
                                       & = #qty("8.98e9", "mF^-1") dot (#qty("2e-6", "C"))^2 /( #qty("5e-1", "m") )^2 \
                                       & = #calc.round(F, digits: 3) "N"
   $
@@ -125,7 +124,7 @@
   记 q3受到的静电力合力为$arrow(F)_"total"$，由图中的几何关系可知：
   $
     arrow(F)_"total" & = arrow(F)_(13) + arrow(F)_(23) \
-                     & = sqrt(3) |arrow(F)_(13)| \
+                     & = sqrt(3) norm(arrow(F)_(13)) \
                      & = #calc.round(calc.sqrt(3) * F, digits: 2) "N"
   $
 
@@ -206,8 +205,8 @@
   #set align(left)
   因为：
   q1 = q2 = q3 = q4 = q \
-  $ |arrow(F)_(12)| = |arrow(F)_(32)| = k q^2 / a^2 $ \
-  $ |arrow(F)_(42)| = k q^2 / (2 a^2) $ \
+  $ norm(arrow(F)_(12)) = norm(arrow(F)_(32)) = k q^2 / a^2 $ \
+  $ norm(arrow(F)_(42)) = k q^2 / (2 a^2) $ \
   $
     arrow(F)_(1232) & = arrow(F)_(12) + arrow(F)_(32) \
                     & = sqrt(2) dot k q^2 / a^2
@@ -318,9 +317,9 @@
   #set align(left)
   因为：$F_g = m g$ \
   由相似三角形可知：\
-  $ (|arrow(F)|)/"cb" = (|arrow(F)_g|)/"Oc" $
+  $ (norm(arrow(F)))/"cb" = (norm(arrow(F)_g))/"Oc" $
   $
-    => |arrow(F)| & = |arrow(F)_g| * "cb" / "Oc" \
+    => norm(arrow(F)) & = norm(arrow(F)_g) * "cb" / "Oc" \
                   & = m g * "cb" / "Oc" \
                   & = #qty("0.6", "g") times #qty("10", "m s^-2") times 5 / 12 \
                   & = #qty("2.5e-3", "N") \

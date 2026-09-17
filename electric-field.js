@@ -23,11 +23,18 @@ const scene = new THREE.Scene();
 // const gridHelper = new THREE.GridHelper(0.2, 10);
 // scene.add(gridHelper);
 
-const particle1 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshBasicMaterial({ color: 0xaaaaaa, opacity: 0.5, transparent: true }));
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+directionalLight.position.set(1, 1, 1);
+scene.add(directionalLight);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const particle1 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshStandardMaterial({ color: 0xff0000, opacity: 1, transparent: true }));
 particle1.position.set(0, 0, 0);
 scene.add(particle1);
 
-const particle2 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
+const particle2 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshStandardMaterial({ color: 0x00ff00, opacity: 1, transparent: true }));
 particle2.position.set(0.06, 0, 0);
 scene.add(particle2);
 
@@ -35,78 +42,99 @@ const vacuumElectricPermittivity = constants["vacuum electric permittivity"].val
 
 const k = 1 / (4 * Math.PI * vacuumElectricPermittivity);
 const particle1Charge = 4.0e-8;
-const particle2Charge = -1.0e-8;
+const particle2Charge = -3e-8;
 const distance = 0.06;
 
 const electricForce = (k * particle1Charge * particle2Charge) / distance ** 2;
 
-textElement.innerHTML = `静电力常数： ${k.toExponential(2)} N m^2 / C^2 <br> 两个电荷之间的静电力： ${electricForce.toExponential(2)} N `;
+// textElement.innerHTML = `静电力常数： ${k.toExponential(2)} N m^2 / C^2 <br> 两个电荷之间的静电力： ${electricForce.toExponential(2)} N `;
 
 // 生成球面采样点
-let surfacePoints = [];
-function generateSurfacePoints(particle, options = {}) {
-  const { stepNum = 10 } = options;
+function generateParticleSurfacePoints(particle, options={}) {
+  const { phiSegments = 10, thetaSegments = 10 } = options;
+  let surfacePoints = [];
   const radius = particle.geometry.parameters.radius;
-  for (let i = 0; i < stepNum; i++) {
-    for (let j = 0; j < stepNum; j++) {
-      let phi = (i * Math.PI) / stepNum;
-      let theta = (j * 2 * Math.PI) / stepNum;
-      const surfacePoint = new THREE.Vector3();
-      surfacePoint.setFromSphericalCoords(radius, phi, theta);
+  for (let i = 0; i <= phiSegments; i++) {
+    for (let j = 0; j <= thetaSegments; j++) {
+      let phi = (i * Math.PI) / phiSegments;
+      let theta = (j * 2 * Math.PI) / thetaSegments;
+      let surfacePoint = new THREE.Vector3();
+      surfacePoint.setFromSphericalCoords(radius, phi, theta).add(particle.position);
       surfacePoints.push(surfacePoint);
     }
   }
+  return surfacePoints;
 }
 
-generateSurfacePoints(particle1, { stepNum: 10 });
+// 生成更均匀的球面采样点（斐波那契采样或修正的经纬度采样）
+// function generateParticleSurfacePoints(particle, options = {}) {
+//   const { numPoints = 50 } = options;
+//   let surfacePoints = [];
+//   const radius = particle.geometry.parameters.radius;
+  
+//   // 使用斐波那契球面采样，分布更均匀
+//   const phi = Math.PI * (3 - Math.sqrt(5)); // 黄金角
+  
+//   for (let i = 0; i < numPoints; i++) {
+//     const y = 1 - (i / (numPoints - 1)) * 2; // y 从 1 到 -1
+//     const radiusAtY = Math.sqrt(1 - y * y);
+//     const theta = phi * i;
+    
+//     const x = Math.cos(theta) * radiusAtY;
+//     const z = Math.sin(theta) * radiusAtY;
+    
+//     let surfacePoint = new THREE.Vector3(x, y, z)
+//       .multiplyScalar(radius)
+//       .add(particle.position);
+//     surfacePoints.push(surfacePoint);
+//   }
+//   return surfacePoints;
+// }
 
-// textElement.innerHTML += `<br>球面采样点数量：${surfacePoints.length}`;
 
-console.log(surfacePoints);
-console.log(particle1.position);
-
-for (let i = 0; i < surfacePoints.length; i++) {
-  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([particle1.position.clone(), surfacePoints[i].clone()]), new THREE.LineBasicMaterial({ color: 0xff0000 }));
-  scene.add(line);
-}
-
-function getSpaceElectricField(point) {
-  const field = new THREE.Vector3();
-  // 来自particle1的电场
-  const distance1 = point.distanceTo(particle1.position);
-  const filed1 = point
+function getParticleElectricField(particle, particleCharge, position) {
+  // 来自particle的电场
+  let field = new THREE.Vector3();
+  const distance = position.distanceTo(particle.position);
+  field = position
     .clone()
-    .sub(particle1.position)
+    .sub(particle.position)
     .normalize()
-    .multiplyScalar((k * particle1Charge) / distance1 ** 2);
-  field.add(filed1);
-  // 来自particle2的电场
-  const distance2 = point.distanceTo(particle2.position);
-  const filed2 = point
-    .clone()
-    .sub(particle2.position)
-    .normalize()
-    .multiplyScalar((k * particle2Charge) / distance2 ** 2);
-  field.add(filed2);
+    .multiplyScalar((k * particleCharge) / distance ** 2);
   return field;
 }
 
-function traceFieldLineFromSurface(stepLength, maxStepLength) {
-  for (let i = 0; i < surfacePoints.length; i++) {
-    let startPoint = surfacePoints[i].clone();
-    let direction = getSpaceElectricField(startPoint).normalize();
-    let currentPoint = startPoint.clone().add(direction.multiplyScalar(stepLength));
-    while (currentPoint.distanceTo(particle1.position) <= maxStepLength && currentPoint.distanceTo(particle2.position) >= particle2.geometry.parameters.radius) {
-      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([startPoint.clone(), currentPoint.clone()]), new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+function getSpaceElectricField(position) {
+  let field = new THREE.Vector3();
+  field.add(getParticleElectricField(particle1, particle1Charge, position));
+  field.add(getParticleElectricField(particle2, particle2Charge, position));
+  return field;
+}
+
+function traceFieldLineFromParticle(particle, particleCharge, phiSegments, thetaSegments,color, otherParticles, stepLength, stepNum) {
+let particleSurfacePoints = generateParticleSurfacePoints(particle, {
+  phiSegments: phiSegments,
+  thetaSegments: thetaSegments,
+});
+  for (let i = 0; i < particleSurfacePoints.length; i++) {
+    let startPoint = particleSurfacePoints[i].clone();
+    let drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
+    let currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(stepLength));
+    let stepCount = 0;
+
+    while (!(stepCount >= stepNum || currentPoint.distanceTo(otherParticles.position) <= otherParticles.geometry.parameters.radius)) {
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([startPoint.clone(), currentPoint.clone()]), new THREE.LineBasicMaterial({ color: color }));
       scene.add(line);
       startPoint = currentPoint.clone();
-      direction = getSpaceElectricField(startPoint).normalize();
-      currentPoint = currentPoint.clone().add(direction.multiplyScalar(stepLength));
+      drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
+      currentPoint = currentPoint.clone().add(drawDirection.multiplyScalar(stepLength));
+      stepCount++;
     }
   }
 }
 
-traceFieldLineFromSurface(particle2.geometry.parameters.radius, 0.2);
+traceFieldLineFromParticle(particle1,particle1Charge, 10, 10, 0xff0000, particle2, 0.002, 100);
+// traceFieldLineFromParticle(particle2, particle2Charge, 6, 6, 0x00ff00, particle1, 0.002, 200);
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0.03, 0.1);
@@ -149,7 +177,7 @@ function animate(currentTime) {
 
   const deltaTime = currentTime - lastFrameTime;
   if (deltaTime < frameInterval) return;
-  console.log(currentTime);
+  // console.log(currentTime);
 
   lastFrameTime = currentTime - (deltaTime % frameInterval);
   // 将 lastFrameTime 对齐到理论帧时间点（frameInterval的整数倍）
@@ -190,7 +218,7 @@ const observer = new IntersectionObserver(
   {
     root: null, // 默认为视口
     rootMargin: "10px", // 表示视口外10px触发可见
-    threshold: 0,  // 观察的阈值
+    threshold: 0, // 观察的阈值
     // 阈值为0表示当元素开始进入视口时触发可见，当元素完全离开视口时触发不可见
     // 进入视口时运行一次回调函数，离开视口时再运行一次回调函数，中间过程不运行回调函数
   },
@@ -198,6 +226,3 @@ const observer = new IntersectionObserver(
 
 // 开始观察 canvasWrapper
 observer.observe(canvasWrapper);
-
-/*方案二： 在script.js中统一管理所有动画的可见性和启停。
-问题：IntersectionObserver 只能观察 DOM 元素，但无法直接控制另一个文件中的 requestAnimationFrame 循环。需要跨文件通信才能统一管理所有 three-animation 元素的可见性，而且同样需要在每个动画文件中通过isIntersecting和isVisible控制动画启停。这是更加复杂的方案，因为逻辑拆分在多个文件中，难以理解。*/
