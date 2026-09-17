@@ -23,9 +23,7 @@ const scene = new THREE.Scene();
 // const gridHelper = new THREE.GridHelper(0.2, 10);
 // scene.add(gridHelper);
 
-
-
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(ambientLight);
 
 const particle1 = new THREE.Mesh(new THREE.SphereGeometry(0.003, 16, 16), new THREE.MeshStandardMaterial({ color: 0xff0000, opacity: 1, transparent: true }));
@@ -57,7 +55,10 @@ function generateParticleSurfacePoints(particle, options = {}) {
       let phi = (i * Math.PI) / phiSegments;
       let theta = (j * 2 * Math.PI) / thetaSegments;
       let surfacePoint = new THREE.Vector3();
-      surfacePoint.setFromSphericalCoords(radius, phi, theta).applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2).add(particle.position);
+      surfacePoint
+        .setFromSphericalCoords(radius, phi, theta)
+        .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2)
+        .add(particle.position);
       surfacePoints.push(surfacePoint);
     }
   }
@@ -82,19 +83,6 @@ function generateParticleSurfacePoints(particle, options = {}) {
 //   }
 //   return surfacePoints;
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function getParticleElectricField(particle, particleCharge, position) {
   // 来自particle的电场
@@ -138,19 +126,21 @@ function traceFieldLineFromParticle(particle, particleCharge, phiSegments, theta
   }
 }
 
-traceFieldLineFromParticle(particle1, particle1Charge, 8, 8, 0xff0000, particle2, 0.002, 0.20);
+traceFieldLineFromParticle(particle1, particle1Charge, 8, 8, 0xff0000, particle2, 0.002, 0.2);
 // traceFieldLineFromParticle(particle2, particle2Charge, 8, 8, 0x00ff00, particle1, 0.002, 0.1);
 
-
-fieldLines.forEach(fieldLine => {
+fieldLines.forEach((fieldLine) => {
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(fieldLine);
-  const lineMaterial = new THREE.LineBasicMaterial({color: 0xaaaaaa})
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0xaaaaaa });
 
   const line = new THREE.Line(lineGeometry, lineMaterial);
   scene.add(line);
   const arrayLength = fieldLine.length;
   const middleIndex = Math.floor(arrayLength / 2);
-  const direction = fieldLine[middleIndex].clone().sub(fieldLine[middleIndex - 1]).normalize();
+  const direction = fieldLine[middleIndex]
+    .clone()
+    .sub(fieldLine[middleIndex - 1])
+    .normalize();
 
   const coneGeometry = new THREE.ConeGeometry(0.0005, 0.002, 10);
   const coneMaterial = new THREE.MeshStandardMaterial({
@@ -164,19 +154,16 @@ fieldLines.forEach(fieldLine => {
   cone.setRotationFromQuaternion(quaternion);
   cone.position.set(fieldLine[middleIndex].x, fieldLine[middleIndex].y, fieldLine[middleIndex].z);
   scene.add(cone);
-})
-
+});
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 10);
 camera.position.set(0.03, 0.03, 0.1);
 // camera.lookAt(0.03, 0, 0);
 scene.add(camera);
 
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight.position.set(camera.position);
-scene.add(directionalLight);
-
+const pointLight = new THREE.PointLight(0xffffff, 0.005, 0.2);
+pointLight.position.copy(camera.position);
+scene.add(pointLight);
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setClearColor(0xfafafa, 1);
@@ -222,6 +209,7 @@ function animate(currentTime) {
   // 长效果：长期保持平均 21 FPS，避免误差累积
 
   orbitControl.update();
+  pointLight.position.copy(camera.position);
   renderer.render(scene, camera);
 }
 
