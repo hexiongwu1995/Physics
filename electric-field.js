@@ -64,6 +64,10 @@ const k = 1 / (4 * Math.PI * vacuumElectricPermittivity);
 const particle1Charge = 4.0e-8;
 const particle2Charge = -1.0e-8;
 const distance = 0.06;
+// 定义基准：单位电荷对应的穿过包围该电荷的封闭曲面的电场线数
+const LinesPerUnitCharge = 2.0e9;
+const LineNumFromParticle1 = LinesPerUnitCharge * particle1Charge;
+const LineNumFromParticle2 = LinesPerUnitCharge * particle2Charge;
 
 
 const electricForce = (k * particle1Charge * particle2Charge) / distance ** 2;
