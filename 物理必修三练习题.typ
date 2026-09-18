@@ -1,7 +1,9 @@
-#import "./itemplate/0.1.5/itemplate.typ": *
+// #import "./itemplate/0.1.5/itemplate.typ": *
+#import "@preview/itemplate:0.1.5": *
 #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
-#import "./theoframe/0.4.0/lib.typ": *
+// #import "./theoframe/0.4.0/lib.typ": *
+#import "@preview/theoframe:0.4.0": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
 
 #import "@preview/unify:0.8.1": *
