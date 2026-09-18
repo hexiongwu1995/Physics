@@ -30,13 +30,42 @@
     id: "electric-field-wrapper",
     class: "three-animation",
   ),
-  html.elem("canvas", attrs: (id: "electric-field-canvas", style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",)),
+  html.elem("canvas", attrs: (
+    id: "electric-field-canvas",
+    style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
+  )),
 )
-#html.elem("p", attrs:(id: "electric-field-text", style:"white-space: pre-wrap"))
+#html.elem("p", attrs: (id: "electric-field-text", style: "white-space: pre-wrap"))
 #html.script(
   type: "module",
   src: "../electric-field.js",
 )
+
+#theorem(name: [电场的高斯定理（积分形式）])[
+  $ integral.surf_S arrow(E) dot d arrow(A) = Q_"enc" / epsilon_0 $
+
+其中各符号的含义为：
+- $integral.surf_S$  ：表示对闭合曲面 S 进行面积分（闭合曲面积分）
+- $arrow(E)$ ：电场强度矢量
+- $d arrow(S)$：曲面上的面积元矢量，方向取曲面的外法向
+- $Q_"enc"$：闭合曲面 S 内部所包围的净电荷（电荷的代数和）
+- $epsilon_0$ ：真空介电常数，约为 $ #qty("8.85e-12", "F m^-1")$ 
+#linebreak()
+  物理意义：
+  - 高斯定理的积分形式表明：通过任意闭合曲面的电通量，等于该曲面内所包围的净电荷除以真空介电常数。
+  这一定理揭示了几个重要性质：
+  - 静电场是有源场：电场线始于正电荷、终于负电荷，电荷就是电场的"源"。
+  - 曲面外电荷对总通量无贡献：闭合曲面外部的电荷虽然会影响曲面上各点的电场强度，但它们穿入又穿出曲面，对总电通量的净贡献为零。
+  - 高斯面形状任意：闭合曲面可以是任意形状，只要完全包围所关心的电荷即可。
+]
+
+#corollary(name:[电场线数目N必须正比于电荷量Q])[
+- 如果我们把每条电场线看作代表固定大小的电通量（比如 $Delta Phi_E$）
+- 那么从电荷 Q 发出的总电场线数 N 满足：$N dot Delta Phi_E = abs(Q_"enc") / epsilon_0$ 
+- 因此：$N prop abs(Q_"enc")$
+]
+
+
 
 = 静电力计算
 
@@ -119,8 +148,8 @@
   #let F = coulomb-constant * Q * Q / calc.pow(r, 2)
   $
     norm(arrow(F)_(13)) = norm(arrow(F)_(23)) & = k_e Q^2 / r^2 \
-                                      & = #qty("8.98e9", "mF^-1") dot (#qty("2e-6", "C"))^2 /( #qty("5e-1", "m") )^2 \
-                                      & = #calc.round(F, digits: 3) "N"
+    & = #qty("8.98e9", "mF^-1") dot (#qty("2e-6", "C"))^2 /( #qty("5e-1", "m") )^2 \
+    & = #calc.round(F, digits: 3) "N"
   $
 
   记 q3受到的静电力合力为$arrow(F)_"total"$，由图中的几何关系可知：
@@ -322,9 +351,9 @@
   $ (norm(arrow(F)))/"cb" = (norm(arrow(F)_g))/"Oc" $
   $
     => norm(arrow(F)) & = norm(arrow(F)_g) * "cb" / "Oc" \
-                  & = m g * "cb" / "Oc" \
-                  & = #qty("0.6", "g") times #qty("10", "m s^-2") times 5 / 12 \
-                  & = #qty("2.5e-3", "N") \
+                      & = m g * "cb" / "Oc" \
+                      & = #qty("0.6", "g") times #qty("10", "m s^-2") times 5 / 12 \
+                      & = #qty("2.5e-3", "N") \
   $
 
   #let F = 2.5e-3;

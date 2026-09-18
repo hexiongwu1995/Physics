@@ -65,10 +65,12 @@ const particle1Charge = 4.0e-8;
 const particle2Charge = -1.0e-8;
 const distance = 0.06;
 
+
 const electricForce = (k * particle1Charge * particle2Charge) / distance ** 2;
 
 // 以y轴为极轴生成球面采样点
 // applyAxisAngle 旋转到x轴为极轴的位置
+// 采样方式不均匀：使用 phiSegments 和 thetaSegments 在球坐标中采样，会导致两极附近点更密集（类似地球经纬线），不是均匀分布
 function generateParticleSurfacePoints(particle, options = {}) {
   const { phiSegments = 10, thetaSegments = 10 } = options;
   let surfacePoints = [];
@@ -133,7 +135,7 @@ function traceFieldLineFromParticle(particle, particleCharge, otherParticles, st
 
 let fieldLineObjects = [];
 
-function drawFieldLines(fieldLinesData, color) {
+function drawFieldLines(fieldLinesData,particleCharge, color) {
   fieldLinesData.forEach((fieldLine) => {
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(fieldLine);
     const lineMaterial = new THREE.LineBasicMaterial({ color: color });
@@ -146,13 +148,11 @@ function drawFieldLines(fieldLinesData, color) {
     const direction = fieldLine[middleIndex]
       .clone()
       .sub(fieldLine[middleIndex - 1])
-      .normalize();
+      .normalize().multiplyScalar(Math.sign(particleCharge));
 
     const coneGeometry = new THREE.ConeGeometry(0.001, 0.005, 10, 1, false);
-    const coneMaterial = new THREE.MeshStandardMaterial({
+    const coneMaterial = new THREE.MeshBasicMaterial({
       color: color,
-      roughness: 0.1,
-      metalness: 0.1,
     });
     const cone = new THREE.Mesh(coneGeometry, coneMaterial);
     const up = new THREE.Vector3(0, 1, 0);
@@ -164,7 +164,8 @@ function drawFieldLines(fieldLinesData, color) {
   });
 }
 
-const options = { phiSegments: 40, thetaSegments: 2 };
+const surfaceSamplingFromParticle1 = { phiSegments: 20, thetaSegments: 2 };
+const surfaceSamplingFromParticle2 = { phiSegments: 10, thetaSegments: 2 };
 // let fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, options);
 // drawFieldLines(fieldLinesDataFromParticle1, 0xbbbbbb);
 
@@ -179,16 +180,19 @@ function clearFieldLines() {
 
 function updateFieldLines() {
   clearFieldLines();
-  const fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, options);
-  drawFieldLines(fieldLinesDataFromParticle1, 0xaaaaaa);
+  const fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, surfaceSamplingFromParticle1);
+  drawFieldLines(fieldLinesDataFromParticle1, particle1Charge, 0xaa5555);
+
+  // const fieldLinesDataFromParticle2 = traceFieldLineFromParticle(particle2, particle2Charge, particle1, particle2.geometry.parameters.radius * 0.9, 0.2, surfaceSamplingFromParticle2);
+  // drawFieldLines(fieldLinesDataFromParticle2, particle2Charge, 0x55aa55);
 }
 
 updateFieldLines();
 
-const fieldLineNumbersFolder = gui.addFolder("FieldLineNumbers");
-fieldLineNumbersFolder.add(options, "phiSegments", 1, 50, 1).name("phiSegments").onChange(updateFieldLines);
+// const fieldLineNumbersFolder = gui.addFolder("FieldLineNumbers");
+// fieldLineNumbersFolder.add(options, "phiSegments", 1, 50, 1).name("phiSegments").onChange(updateFieldLines);
 
-fieldLineNumbersFolder.add(options, "thetaSegments", 1, 50, 1).name("thetaSegments").onChange(updateFieldLines);
+// fieldLineNumbersFolder.add(options, "thetaSegments", 1, 50, 1).name("thetaSegments").onChange(updateFieldLines);
 
 const cameraPosition = {
   topView: function () {
