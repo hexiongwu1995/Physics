@@ -192,7 +192,7 @@ fieldLineNumbersFolder.add(options, "thetaSegments", 1, 50, 1).name("thetaSegmen
 
 const cameraPosition = {
   topView: function () {
-    camera.position.set(0.25, 0, 0);
+    camera.position.set(0.03, 0.25, 0);
     orbitControl.update();
   },
   frontView: function () {
