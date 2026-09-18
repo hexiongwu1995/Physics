@@ -19,8 +19,8 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, canvasWidth / canvasHeight, 0.01, 100);
 scene.add(camera);
-camera.position.set(0.03, 0, 0.1);
-// camera.lookAt(0.03, 0, 0);
+camera.position.set(0.03, 0, 0.25);
+camera.lookAt(0.03, 0, 0);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(ambientLight);
@@ -76,7 +76,7 @@ function generateParticleSurfacePoints(particle, options = {}) {
   for (let i = 0; i <= phiSegments; i++) {
     for (let j = 0; j <= thetaSegments; j++) {
       let phi = (i * Math.PI) / phiSegments;
-      let theta = (j * 2 * Math.PI) / thetaSegments;
+      let theta = ((j - thetaSegments/4) / thetaSegments ) * 2 * Math.PI;
       let surfacePoint = new THREE.Vector3();
       surfacePoint
         .setFromSphericalCoords(radius, phi, theta)
@@ -148,7 +148,7 @@ function drawFieldLines(fieldLinesData, color) {
       .sub(fieldLine[middleIndex - 1])
       .normalize();
 
-    const coneGeometry = new THREE.ConeGeometry(0.0005, 0.002, 5);
+    const coneGeometry = new THREE.ConeGeometry(0.001, 0.005, 10, 1, false);
     const coneMaterial = new THREE.MeshStandardMaterial({
       color: color,
       roughness: 0.1,
@@ -164,7 +164,7 @@ function drawFieldLines(fieldLinesData, color) {
   });
 }
 
-const options = { phiSegments: 20, thetaSegments: 20 };
+const options = { phiSegments: 40, thetaSegments: 2 };
 // let fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, options);
 // drawFieldLines(fieldLinesDataFromParticle1, 0xbbbbbb);
 
@@ -180,36 +180,35 @@ function clearFieldLines() {
 function updateFieldLines() {
   clearFieldLines();
   const fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, options);
-  drawFieldLines(fieldLinesDataFromParticle1, 0xbbbbbb);
+  drawFieldLines(fieldLinesDataFromParticle1, 0xaaaaaa);
 }
 
 updateFieldLines();
 
 const fieldLineNumbersFolder = gui.addFolder("FieldLineNumbers");
-fieldLineNumbersFolder.add(options, "phiSegments", 10, 50, 1).name("phiSegments").onChange(updateFieldLines);
+fieldLineNumbersFolder.add(options, "phiSegments", 1, 50, 1).name("phiSegments").onChange(updateFieldLines);
 
-fieldLineNumbersFolder.add(options, "thetaSegments", 10, 50, 1).name("thetaSegments").onChange(updateFieldLines);
+fieldLineNumbersFolder.add(options, "thetaSegments", 1, 50, 1).name("thetaSegments").onChange(updateFieldLines);
 
 const cameraPosition = {
+  topView: function () {
+    camera.position.set(0.25, 0, 0);
+    orbitControl.update();
+  },
   frontView: function () {
-    camera.position.set(0.03, 0, 0.3);
-    camera.lookAt(0.03, 0, 0);
-    orbitControl.target.set(0.03, 0, 0);
+    camera.position.set(0.03, 0, 0.25);
     orbitControl.update();
   },
   rightView: function () {
-    camera.position.set(0.3, 0, 0);
-    camera.lookAt(0.03, 0, 0);
-    orbitControl.target.set(0.03, 0, 0);
+    camera.position.set(0.25, 0, 0);
     orbitControl.update();
-  },
+  }
 };
 
 const cameraFolder = gui.addFolder("CameraPosition");
+cameraFolder.add(cameraPosition, "topView").name("Top View");
 cameraFolder.add(cameraPosition, "frontView").name("Front View");
 cameraFolder.add(cameraPosition, "rightView").name("Right View");
-
-
 
 // =====================================================
 
