@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>斐波那契数列</title><link rel="stylesheet" blocking="blocking" href="https://cdn.jsdelivr.net/npm/@hexiongwu1995/itemplate/icon_font/iconfont.css"><script type="importmap">{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
+    "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js",
+    "fundamental-physical-constants": "https://unpkg.com/fundamental-physical-constants/FundamentalPhysicalConstants.js"
+  }
+}</script><script>MathJax = {
+  loader: {
+    load: ['input/asciimath', 'output/chtml']
+  }
+};</script><script src="https://cdn.jsdelivr.net/npm/mathjax@4/startup.js" defer></script><link rel="stylesheet" href="./assets/style.css"><link rel="stylesheet" href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css"><script src="./assets/script.js" defer></script><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style></head><body><div class="container"><aside><span class="aside-title-large-screen">Table of Contents</span><span class="aside-title-small-screen">斐波那契数列</span><div class="function-panel"><span class="iconfont icon-Numbering"><span class="numbering-text">Numbering Titles</span></span><span class="iconfont icon-expand-all"><span class="expand-all-text">Expand All</span></span></div><nav><ol id="toc-root"></ol></nav><div id="resize-handle"></div></aside><div class="overlay"></div><main><header><span class="header-left"><span class="iconfont icon-Aside"></span><span class="iconfont icon-menu3"></span></span><span class="header-middle">斐波那契数列</span><span class="header-right"><a class="iconfont-home"><span class="iconfont icon-home"></span></a><a class="iconfont-github"><span class="iconfont icon-github"></span></a><a class="iconfont-print"><span class="iconfont icon-print"></span></a><a class="iconfont-paintbrush"><span class="iconfont icon-paintbrush"></span></a></span></header><article><h2>在球面上生成间距均匀的N个点</h2><p>斐波那契螺旋法（Fibonacci Lattice）<br>原理：基于黄金分割率，在球面上按螺旋线排列点。计算极快、分布极为均匀，是实用性最高的标准解法。</p><div style="background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;" id="fibonacci-sampling-wrapper" class="three-animation"><canvas id="fibonacci-sampling-canvas" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center"></canvas></div><p id="fibonacci-sampling-text" style="white-space: pre-wrap"></p><script type="module" src="../fibonacci-sampling.js"></script><h2>Fibonacci sequence</h2><p>The Fibonacci sequence is defined through the recurrence relation <math><msub><mi>𝐹</mi><mi>𝑛</mi></msub><mo>=</mo><msub><mi>𝐹</mi><mrow><mi>𝑛</mi><mo lspace="0em" rspace="0em">−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>𝐹</mi><mrow><mi>𝑛</mi><mo lspace="0em" rspace="0em">−</mo><mn>2</mn></mrow></msub></math>. It can also be expressed in <em>closed form :</em></p><math display="block"><msub><mi>𝐹</mi><mi>𝑛</mi></msub><mo>=</mo><mrow><mo>⌊</mo><mrow><mfrac><mn>1</mn><msqrt><mn>5</mn></msqrt></mfrac><msup><mi>𝜙</mi><mi>𝑛</mi></msup></mrow><mo>⌉</mo></mrow><mo rspace="0em">,</mo><mspace width="1em"/><mi>𝜙</mi><mo>=</mo><mfrac><mrow><mn>1</mn><mo>+</mo><msqrt><mn>5</mn></msqrt></mrow><mn>2</mn></mfrac><mo>=</mo><mn>1.618</mn></math><p>The first 18 numbers of the sequence are:</p><h3>iteration form</h3><table><tr><td><math><msub><mi>𝐹</mi><mn>1</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>2</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>3</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>4</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>5</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>6</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>7</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>8</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>9</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>10</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>11</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>12</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>13</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>14</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>15</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>16</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>17</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>18</mn></msub></math></td></tr><tr><td>1</td><td>1</td><td>2</td><td>3</td><td>5</td><td>8</td><td>13</td><td>21</td><td>34</td><td>55</td><td>89</td><td>144</td><td>233</td><td>377</td><td>610</td><td>987</td><td>1597</td><td>2584</td></tr></table><h3>closed form</h3><table><tr><td><math><msub><mi>𝐹</mi><mn>1</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>2</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>3</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>4</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>5</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>6</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>7</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>8</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>9</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>10</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>11</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>12</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>13</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>14</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>15</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>16</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>17</mn></msub></math></td><td><math><msub><mi>𝐹</mi><mn>18</mn></msub></math></td></tr><tr><td><math><mn>1</mn></math></td><td><math><mn>1</mn></math></td><td><math><mn>2</mn></math></td><td><math><mn>3</mn></math></td><td><math><mn>5</mn></math></td><td><math><mn>8</mn></math></td><td><math><mn>13</mn></math></td><td><math><mn>21</mn></math></td><td><math><mn>34</mn></math></td><td><math><mn>55</mn></math></td><td><math><mn>89</mn></math></td><td><math><mn>144</mn></math></td><td><math><mn>233</mn></math></td><td><math><mn>377</mn></math></td><td><math><mn>610</mn></math></td><td><math><mn>987</mn></math></td><td><math><mn>1597</mn></math></td><td><math><mn>2584</mn></math></td></tr></table></article></main></div></body></html>

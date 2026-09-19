@@ -61,28 +61,23 @@ scene.add(particle2);
 const vacuumElectricPermittivity = constants["vacuum electric permittivity"].value;
 
 const k = 1 / (4 * Math.PI * vacuumElectricPermittivity);
-const particle1Charge = 4.0e-8;
-const particle2Charge = -1.0e-8;
-const distance = 0.06;
-// 定义基准：单位电荷对应的穿过包围该电荷的封闭曲面的电场线数
-const LinesPerUnitCharge = 2.0e9;
-const LineNumFromParticle1 = LinesPerUnitCharge * particle1Charge;
-const LineNumFromParticle2 = LinesPerUnitCharge * particle2Charge;
-
-
-const electricForce = (k * particle1Charge * particle2Charge) / distance ** 2;
+let particle1Charge = 4.0e-8;
+let particle2Charge = -1.0e-8;
+let distance = 0.06;
 
 // 以y轴为极轴生成球面采样点
 // applyAxisAngle 旋转到x轴为极轴的位置
 // 采样方式不均匀：使用 phiSegments 和 thetaSegments 在球坐标中采样，会导致两极附近点更密集（类似地球经纬线），不是均匀分布
-function generateParticleSurfacePoints(particle, options = {}) {
-  const { phiSegments = 10, thetaSegments = 10 } = options;
+function generateParticleSurfacePoints(particle, particleCharge, segments = {}) {
+  const chargeFraction = Math.abs(particleCharge) / (Math.abs(particle1Charge) + Math.abs(particle2Charge));
+  let { phiSegments = 50, thetaSegments = 2 } = segments;
+  phiSegments = Math.floor(chargeFraction * phiSegments);
   let surfacePoints = [];
   const radius = particle.geometry.parameters.radius;
   for (let i = 0; i <= phiSegments; i++) {
     for (let j = 0; j <= thetaSegments; j++) {
       let phi = (i * Math.PI) / phiSegments;
-      let theta = ((j - thetaSegments/4) / thetaSegments ) * 2 * Math.PI;
+      let theta = [(j - thetaSegments / 4) / thetaSegments] * 2 * Math.PI;
       let surfacePoint = new THREE.Vector3();
       surfacePoint
         .setFromSphericalCoords(radius, phi, theta)
@@ -93,6 +88,25 @@ function generateParticleSurfacePoints(particle, options = {}) {
   }
   return surfacePoints;
 }
+
+// 斐波那契螺旋法采样（Fibonacci Lattice）
+// function getFibonacciSpherePoints(particle, N) {
+//   const particleRadius = particle.geometry.parameters.radius;
+//   const surfacePoints = [];
+//   const phi = (1 + Math.sqrt(5)) / 2;
+
+//   for (let i = 0; i < N; i++) {
+//     const y = (N - 1 - 2 * i) / (N - 1);
+//     const radius = Math.sqrt(1 - y * y);
+//     const theta = (2 * Math.PI * i) / phi;
+//     const z = radius * Math.cos(theta);
+//     const x = radius * Math.sin(theta);
+//     const surfacePoint = new THREE.Vector3(x, y, z);
+//     surfacePoint.multiplyScalar(particleRadius).add(particle.position);
+//     surfacePoints.push(surfacePoint);
+//   }
+//   return surfacePoints;
+// }
 
 function getParticleElectricField(particle, particleCharge, position) {
   let field = new THREE.Vector3();
@@ -113,10 +127,11 @@ function getSpaceElectricField(position) {
 }
 
 // 获取电场线的点集
-function traceFieldLineFromParticle(particle, particleCharge, otherParticles, stepLength, maxLength, options = {}) {
-  const { phiSegments = 10, thetaSegments = 10 } = options;
+function traceFieldLineFromParticle(particle, segments, particleCharge, otherParticles, stepLength, maxLength) {
   let fieldLinesDataFromParticle = [];
-  let particleSurfacePoints = generateParticleSurfacePoints(particle, options);
+  let particleRadius = particle.geometry.parameters.radius;
+  let otherParticlesRadius = otherParticles.geometry.parameters.radius;
+  let particleSurfacePoints = generateParticleSurfacePoints(particle, particleCharge, segments);
 
   for (let i = 0; i < particleSurfacePoints.length; i++) {
     let fieldLine = [];
@@ -125,11 +140,14 @@ function traceFieldLineFromParticle(particle, particleCharge, otherParticles, st
     let drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
     let currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(stepLength));
 
-    while (!(currentPoint.distanceTo(particle.position) >= maxLength || currentPoint.distanceTo(otherParticles.position) <= otherParticles.geometry.parameters.radius)) {
+    while (!(currentPoint.distanceTo(particle.position) >= maxLength || currentPoint.distanceTo(otherParticles.position) <= otherParticlesRadius)) {
+      if (currentPoint.distanceTo(otherParticles.position) <= 3 * otherParticlesRadius || currentPoint.distanceTo(particle.position) <= 3 * particleRadius) {
+        stepLength = Math.min(particleRadius, otherParticlesRadius) / 5;
+      }
       startPoint = currentPoint.clone();
       fieldLine.push(startPoint);
       drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
-      currentPoint = currentPoint.clone().add(drawDirection.multiplyScalar(stepLength));
+      currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(stepLength));
     }
     fieldLine.push(currentPoint);
     fieldLinesDataFromParticle.push(fieldLine);
@@ -139,7 +157,7 @@ function traceFieldLineFromParticle(particle, particleCharge, otherParticles, st
 
 let fieldLineObjects = [];
 
-function drawFieldLines(fieldLinesData,particleCharge, color) {
+function drawFieldLines(fieldLinesData, particleCharge, color) {
   fieldLinesData.forEach((fieldLine) => {
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(fieldLine);
     const lineMaterial = new THREE.LineBasicMaterial({ color: color });
@@ -152,7 +170,8 @@ function drawFieldLines(fieldLinesData,particleCharge, color) {
     const direction = fieldLine[middleIndex]
       .clone()
       .sub(fieldLine[middleIndex - 1])
-      .normalize().multiplyScalar(Math.sign(particleCharge));
+      .normalize()
+      .multiplyScalar(Math.sign(particleCharge));
 
     const coneGeometry = new THREE.ConeGeometry(0.001, 0.005, 10, 1, false);
     const coneMaterial = new THREE.MeshBasicMaterial({
@@ -168,12 +187,17 @@ function drawFieldLines(fieldLinesData,particleCharge, color) {
   });
 }
 
-const surfaceSamplingFromParticle1 = { phiSegments: 20, thetaSegments: 2 };
-const surfaceSamplingFromParticle2 = { phiSegments: 10, thetaSegments: 2 };
-// let fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, options);
-// drawFieldLines(fieldLinesDataFromParticle1, 0xbbbbbb);
+// let LinesPerUnitCharge, chargeRatio, LineNumFromParticle1, LineNumFromParticle2;
+
+// 定义基准：单位电荷对应的穿过包围该电荷的封闭曲面的电场线数
+// function resetLinesPerUnitCharge(N) {
+//   LinesPerUnitCharge = N; // 2.0e9
+//   LineNumFromParticle1 = Math.abs(LinesPerUnitCharge * particle1Charge);
+//   LineNumFromParticle2 = Math.abs(LinesPerUnitCharge * particle2Charge);
+// }
 
 function clearFieldLines() {
+  if (fieldLineObjects.length === 0) return;
   fieldLineObjects.forEach((obj) => {
     scene.remove(obj);
     if (obj.geometry) obj.geometry.dispose();
@@ -182,21 +206,48 @@ function clearFieldLines() {
   fieldLineObjects = [];
 }
 
+let segments = {
+  phiSegments: 100,
+  thetaSegments: 2,
+};
+
+function traceParticle1() {
+  const fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, segments, particle1Charge, particle2, particle1.geometry.parameters.radius, distance * 3);
+  drawFieldLines(fieldLinesDataFromParticle1, particle1Charge, 0xccaaaa);
+}
+
+function traceParticle2() {
+  const fieldLinesDataFromParticle2 = traceFieldLineFromParticle(particle2, segments, particle2Charge, particle1, particle2.geometry.parameters.radius, distance * 3);
+  drawFieldLines(fieldLinesDataFromParticle2, particle2Charge, 0xaaccaa);
+}
+
 function updateFieldLines() {
   clearFieldLines();
-  const fieldLinesDataFromParticle1 = traceFieldLineFromParticle(particle1, particle1Charge, particle2, particle1.geometry.parameters.radius * 0.9, 0.2, surfaceSamplingFromParticle1);
-  drawFieldLines(fieldLinesDataFromParticle1, particle1Charge, 0xaa5555);
-
-  // const fieldLinesDataFromParticle2 = traceFieldLineFromParticle(particle2, particle2Charge, particle1, particle2.geometry.parameters.radius * 0.9, 0.2, surfaceSamplingFromParticle2);
-  // drawFieldLines(fieldLinesDataFromParticle2, particle2Charge, 0x55aa55);
+  traceParticle1();
+  traceParticle2();
 }
 
 updateFieldLines();
 
-// const fieldLineNumbersFolder = gui.addFolder("FieldLineNumbers");
-// fieldLineNumbersFolder.add(options, "phiSegments", 1, 50, 1).name("phiSegments").onChange(updateFieldLines);
+const chargeFolder = gui.addFolder("Charge");
+chargeFolder
+  .add({ value: particle1Charge }, "value", 1.0e-8, 10.0e-8, 1.0e-8)
+  .name("Particle1 Charge")
+  .onChange((v) => {
+    particle1Charge = v;
+    updateFieldLines();
+  });
+chargeFolder
+  .add({ value: particle2Charge }, "value", -10.0e-8, -1.0e-8, 1.0e-8)
+  .name("Particle2 Charge")
+  .onChange((v) => {
+    particle2Charge = v;
+    updateFieldLines();
+  });
 
-// fieldLineNumbersFolder.add(options, "thetaSegments", 1, 50, 1).name("thetaSegments").onChange(updateFieldLines);
+const fieldLineNumbersFolder = gui.addFolder("FieldLineNumbers");
+fieldLineNumbersFolder.add(segments, "phiSegments", 10, 100, 1).name("phiSegments").onChange(updateFieldLines);
+fieldLineNumbersFolder.add(segments, "thetaSegments", 1, 20, 1).name("thetaSegments").onChange(updateFieldLines);
 
 const cameraPosition = {
   topView: function () {
@@ -210,7 +261,7 @@ const cameraPosition = {
   rightView: function () {
     camera.position.set(0.25, 0, 0);
     orbitControl.update();
-  }
+  },
 };
 
 const cameraFolder = gui.addFolder("CameraPosition");
