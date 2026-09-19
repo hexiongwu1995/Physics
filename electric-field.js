@@ -67,7 +67,6 @@ let distance = 0.06;
 
 // 以y轴为极轴生成球面采样点
 // applyAxisAngle 旋转到x轴为极轴的位置
-// 采样方式不均匀：使用 phiSegments 和 thetaSegments 在球坐标中采样，会导致两极附近点更密集（类似地球经纬线），不是均匀分布
 function generateParticleSurfacePoints(particle, particleCharge, segments = {}) {
   const chargeFraction = Math.abs(particleCharge) / (Math.abs(particle1Charge) + Math.abs(particle2Charge));
   let { phiSegments = 50, thetaSegments = 2 } = segments;
@@ -77,7 +76,7 @@ function generateParticleSurfacePoints(particle, particleCharge, segments = {}) 
   for (let i = 0; i <= phiSegments; i++) {
     for (let j = 0; j <= thetaSegments; j++) {
       let phi = (i * Math.PI) / phiSegments;
-      let theta = [(j - thetaSegments / 4) / thetaSegments] * 2 * Math.PI;
+      let theta = ((j - thetaSegments / 4) / thetaSegments) * 2 * Math.PI;
       let surfacePoint = new THREE.Vector3();
       surfacePoint
         .setFromSphericalCoords(radius, phi, theta)
@@ -88,25 +87,6 @@ function generateParticleSurfacePoints(particle, particleCharge, segments = {}) 
   }
   return surfacePoints;
 }
-
-// 斐波那契螺旋法采样（Fibonacci Lattice）
-// function getFibonacciSpherePoints(particle, N) {
-//   const particleRadius = particle.geometry.parameters.radius;
-//   const surfacePoints = [];
-//   const phi = (1 + Math.sqrt(5)) / 2;
-
-//   for (let i = 0; i < N; i++) {
-//     const y = (N - 1 - 2 * i) / (N - 1);
-//     const radius = Math.sqrt(1 - y * y);
-//     const theta = (2 * Math.PI * i) / phi;
-//     const z = radius * Math.cos(theta);
-//     const x = radius * Math.sin(theta);
-//     const surfacePoint = new THREE.Vector3(x, y, z);
-//     surfacePoint.multiplyScalar(particleRadius).add(particle.position);
-//     surfacePoints.push(surfacePoint);
-//   }
-//   return surfacePoints;
-// }
 
 function getParticleElectricField(particle, particleCharge, position) {
   let field = new THREE.Vector3();
