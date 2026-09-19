@@ -141,13 +141,17 @@ function traceFieldLineFromParticle(particle, segments, particleCharge, otherPar
     let currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(stepLength));
 
     while (!(currentPoint.distanceTo(particle.position) >= maxLength || currentPoint.distanceTo(otherParticles.position) <= otherParticlesRadius)) {
+
+      let resetStepLength;
       if (currentPoint.distanceTo(otherParticles.position) <= 3 * otherParticlesRadius || currentPoint.distanceTo(particle.position) <= 3 * particleRadius) {
-        stepLength = Math.min(particleRadius, otherParticlesRadius) / 5;
+        resetStepLength = Math.min(particleRadius, otherParticlesRadius) / 5;
+      } else {
+        resetStepLength = stepLength;
       }
       startPoint = currentPoint.clone();
       fieldLine.push(startPoint);
       drawDirection = getSpaceElectricField(startPoint).normalize().multiplyScalar(Math.sign(particleCharge));
-      currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(stepLength));
+      currentPoint = startPoint.clone().add(drawDirection.multiplyScalar(resetStepLength));
     }
     fieldLine.push(currentPoint);
     fieldLinesDataFromParticle.push(fieldLine);
@@ -229,16 +233,18 @@ function updateFieldLines() {
 
 updateFieldLines();
 
+const chargeValues = [-5.0e-8, -4.0e-8, -3.0e-8, -2.0e-8, -1.0e-8, 1.0e-8, 2.0e-8, 3.0e-8, 4.0e-8, 5.0e-8];
+
 const chargeFolder = gui.addFolder("Charge");
 chargeFolder
-  .add({ value: particle1Charge }, "value", 1.0e-8, 10.0e-8, 1.0e-8)
+  .add({ value: particle1Charge }, "value", chargeValues)
   .name("Particle1 Charge")
   .onChange((v) => {
     particle1Charge = v;
     updateFieldLines();
   });
 chargeFolder
-  .add({ value: particle2Charge }, "value", -10.0e-8, -1.0e-8, 1.0e-8)
+  .add({ value: particle2Charge }, "value", chargeValues)
   .name("Particle2 Charge")
   .onChange((v) => {
     particle2Charge = v;
