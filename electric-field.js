@@ -90,12 +90,12 @@ function generateParticleSurfacePoints(particle, particleCharge, segments = {}) 
 
 function getParticleElectricField(particle, particleCharge, position) {
   let field = new THREE.Vector3();
-  const distance = position.distanceTo(particle.position);
+  const r = position.distanceTo(particle.position);
   field = position
     .clone()
     .sub(particle.position)
     .normalize()
-    .multiplyScalar((k * particleCharge) / distance ** 2);
+    .multiplyScalar((k * particleCharge) / r ** 2);
   return field;
 }
 
