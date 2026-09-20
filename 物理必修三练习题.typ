@@ -1,6 +1,6 @@
 // #import "./itemplate/0.1.5/itemplate.typ": *
-#import "@preview/itemplate:0.1.5": *
-#show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
+// #import "@preview/itemplate:0.1.5": *
+// #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
 // #import "./theoframe/0.4.0/lib.typ": *
 #import "@preview/theoframe:0.4.0": *
@@ -13,7 +13,7 @@
 #import invaria.codata2022.atomic-and-nuclear: *
 #import invaria.codata2022.electromagnetic: *
 
-#import "@preview/cetz:0.5.2"
+#import "@preview/cetz:0.4.2"
 
 #show math.equation: set block(breakable: true)
 
@@ -22,6 +22,156 @@
 // #set heading(numbering: "1.")
 
 = 电场和电场强度
+
+
+#problem(name: [用一条绝缘轻绳悬挂一个带正电小球，小球质量为$1.0×10^(-3)$  kg，所带电荷量为
+  $2.0×10^(-8)$  C。现加水平方向的匀强电场，平衡时绝缘绳与竖直方向夹角为30°。求匀强电场的电场强度。])[
+
+  #set align(center)
+
+  #figure(
+    caption: [匀强电场中的一个带电小球],
+    numbering: "1.",
+    // _ => context counter(figure.where(kind: "diagram")).display("1.")
+    kind: "diagram",
+    supplement: [图],
+  )[
+    #cetz.canvas(length: 0.7cm, {
+      import cetz.draw: *
+      let (P0, P1, P2, P3, P4, P5, P6, P7) = ((0, 0), (0, -1), (0, -2), (0, -3), (0, -4), (0, -5), (0, -6), (0, -7))
+      let Pq = (rel: (-60deg, 6.5), to: P0)
+      rect((-0.5, 0), (0.5, 0.2), fill: gradient.linear(dir: ttb, rgb("#eeeeee"), rgb("#999999")), stroke: none)
+      let points = (P1, P2, P3, P4, P5, P6)
+      for p in points {
+        set-style(line: (
+          stroke: (paint: rgb("#55aaaa"), thickness: 1pt),
+          mark: (end: (symbol: "stealth", fill: rgb("#55aaaa"))),
+        ))
+        line((rel: (-4, 0), to: p), (rel: (4, 0), to: p))
+      }
+      set-style(line: (stroke: (paint: rgb("#6e6e6e"), dash: "dashed", thickness: 1pt), mark: none))
+      line(P0, P7)
+      set-style(line: (stroke: (paint: rgb("#6e6e6e"), dash: "solid", thickness: 1pt), mark: none))
+      line(P0, Pq)
+
+      set-style(content: (
+        frame: "circle",
+        fill: gradient.radial(rgb("#eeeeee8a"), rgb("#3a3a3ab6")),
+        padding: 1pt,
+        stroke: none,
+      ))
+      on-layer(2, {
+        content(Pq, [#text(size: 11pt, fill: rgb("#55eeeee2"))[q]], anchor: "center")
+      })
+      set-style(content: (
+        frame: none,
+        stroke: none,
+      ))
+      cetz.angle.angle(
+        P0,
+        P7,
+        Pq,
+        radius: 1.2,
+        direction: "ccw",
+        mark: (end: ">", fill: black, scale: 0.6),
+        label: $30^o$,
+        label-radius: 1.8,
+      )
+      set-style(line: (
+        stroke: (paint: rgb("#030303"), dash: "solid", thickness: 1pt),
+        mark: (end: (symbol: "stealth", fill: rgb("#0a0a0a"), scale: 0.5)),
+      ))
+      let Pl = (rel: (120deg, 1.5 * 2), to: Pq)
+      let Pe = (rel: (1.5, 0), to: Pq)
+      let Pg = (rel: (0, -1.5 * calc.tan(60deg)), to: Pq)
+      line(Pq, Pl, name: "LineP")
+      line(Pq, Pe, name: "LineE")
+      line(Pq, Pg, name: "LineG")
+      content(Pl, $F_P$, anchor: "south-west", padding: 2pt)
+      content(Pe, $F_E$, anchor: "west", padding: 2pt)
+      content(Pg, $F_G$, anchor: "north", padding: 2pt)
+    })
+  ]
+
+  #set align(left)
+  因为：$F_P dot cos(30^o) = F_G$ \
+  且：$F_P dot sin(30^o) = F_E$ \
+  所以：$F_E = F_G dot tan(30^o)$ \
+  又因为：$F_E = q E$ \
+  所以：$ E & =(m g) /q \
+    & = 4.9 dot 10^5 "N/C" $
+]
+
+#problem(name: [如下图，真空中有两个点电荷，Q1为4.0×10-8 C 、Q2 为-1.0×10-8 C，分别固定
+  在x 轴的坐标为0 和6 cm 的位置上。
+  + x 轴上哪个位置的电场强度为0 ？
+  + x 轴上哪些位置的电场强度的方向是沿 x 轴的正方向的？
+])[
+  #set align(center)
+
+  #figure(
+    caption: [两个异号不等量电荷的电场分布情况],
+    numbering: "1.",
+    // _ => context counter(figure.where(kind: "diagram")).display("1.")
+    kind: "diagram",
+    supplement: [图],
+  )[
+    #cetz.canvas(length: 1cm, {
+      import cetz.draw: *
+      set-style(line: (mark: (end: (symbol: "stealth", fill: black))))
+      let (_P1, P0, P1, P2, P3, P4, P5, P6, P7, P8) = (
+        (-1, 0),
+        (0, 0),
+        (1, 0),
+        (2, 0),
+        (3, 0),
+        (4, 0),
+        (5, 0),
+        (6, 0),
+        (7, 0),
+        (8, 0),
+      )
+      line(_P1, P8)
+      let P_Collection = (P0, P1, P2, P3, P4, P5, P6)
+      // P_Collection.forEach((p)=> line(p, (rel:(0,0.1), to:p)))
+      set-style(line: (mark: none))
+      for p in P_Collection {
+        line(p, (rel: (0, 0.1), to: p))
+        content(p, [#p.at(0)], anchor: "north", padding: 0.5em)
+      }
+      content(P8, [x/cm], anchor: "north", padding: 0.5em)
+      content(P0, text(size: 8pt)[$Q_1$], anchor: "south", padding: 0.25cm)
+      content(P6, text(size: 8pt)[$Q_2$], anchor: "south", padding: 0.25cm)
+      set-style(content: (
+        frame: "circle",
+        padding: 1pt,
+        fill: gradient.radial(rgb("#eeeeee"), rgb("#449999")),
+        stroke: none,
+      ))
+      content(P0, [+])
+      content(P6, [-])
+    })
+  ]
+  #set align(left)
+  #let k = 1 / (4 * calc.pi * vacuum-electric-permittivity.val)
+  (1) 由图可知：
+    - 当 x < 0时，正电荷的电场指向x轴负方向，负电荷的电场指向x轴正方向，由于距离正电荷更近，而且正电荷的电荷量更大，合电场方向由正电荷的电场决定，即指向x轴负方向。
+    - 当 0 < x < 6 时，正负电荷的电场都指向x轴正方向
+    - 当 x > 6 时，正电荷的电场指向x轴正方向，负电荷的电场指向x轴负方向
+
+      $ E_x = k dot 10^4 (Q_1/(x-0)^2 + Q_2/(x-6)^2 ) quad "定义域：" x > 6 $
+      因为：$k &= qty("8.99e9", "N m^2 C^-2")$ \
+      则：$E_x &= 8.99 dot 10^9 times 1.0 dot 10^(-8) times 10^4 (4/x^2 - 1/(x-6)^2)$ \
+      令：$E_x = 0$ \
+      得等价表达式：$x^2 = 4(x-6)^2$ \
+      即：$3 x^2 -48 x + 144 = 0$ \
+      即：$x^2 - 16 x + 48 = 0$ \
+      即：$(x-4)(x-12) = 0$ \
+      解得：$x = 12 "或者" 4("舍去")$
+  (2) 在$x>6$的范围内：
+    $ E_x = k (Q_1/(x-0)^2 + Q_2/(x-6)^2 ) quad "定义域：" x > 6 $
+    令：$E_x > 0$， 得：$x > 12 "或者" x < 4 ("舍去")$
+]
 
 #html.elem(
   "div",
@@ -44,13 +194,13 @@
 #note(name: [点电荷周围球面的采样方案])[
   平分极角和方位角方案：通过平分球坐标中的极角$phi$和方位角$theta$采样得到的采样点之间的直线距离是不相等的，这会导致靠近极角的位置单位面积上的采样点数量更多。
 
-  为什么需要均匀采样？ \ 
+  为什么需要均匀采样？ \
   因为在点电荷表面（即围绕点电荷的球面）上，电场线的密度与方向无关。
-具体原因如下：
-- 球对称性：点电荷的电场具有球对称性，以点电荷为中心作一个球面，球面上各点到点电荷的距离相同。根据点电荷场强公式$E = k Q \/ r^2$ ，球面上各点的电场强度大小相等。
-- 密度反映场强大小：电场线的疏密程度（即单位垂直面积内穿过的电场线条数）代表该处电场强度的大小。既然球面上各点场强大小相同，那么电场线的密度在球面上各处也相同。
-- 方向沿径向但各不相同：虽然球面上各点电场线的方向不同（正点电荷向外辐射，负点电荷向内汇聚），但方向的不同并不影响密度。方向由电场线的切线方向表示，而密度由电场线的疏密程度表示，两者是电场线的两个独立属性。
-- 总结：在以点电荷为中心的球面上，电场线密度处处相同，但方向各不相同——密度只与到场源的距离有关，与方向无关。
+  具体原因如下：
+  - 球对称性：点电荷的电场具有球对称性，以点电荷为中心作一个球面，球面上各点到点电荷的距离相同。根据点电荷场强公式$E = k Q \/ r^2$ ，球面上各点的电场强度大小相等。
+  - 密度反映场强大小：电场线的疏密程度（即单位垂直面积内穿过的电场线条数）代表该处电场强度的大小。既然球面上各点场强大小相同，那么电场线的密度在球面上各处也相同。
+  - 方向沿径向但各不相同：虽然球面上各点电场线的方向不同（正点电荷向外辐射，负点电荷向内汇聚），但方向的不同并不影响密度。方向由电场线的切线方向表示，而密度由电场线的疏密程度表示，两者是电场线的两个独立属性。
+  - 总结：在以点电荷为中心的球面上，电场线密度处处相同，但方向各不相同——密度只与到场源的距离有关，与方向无关。
 ]
 
 #theorem(name: [电场的高斯定理（积分形式）])[
@@ -78,8 +228,7 @@
 ]
 
 
-
-= 静电力计算
+= 库仑定律
 
 #example(
   name: [在氢原子内，氢原子核与电子之间的最短距离为$5.3 times 10^(-11)$  m。试比较氢原子核与电子之间的静电力和万有引力。],
@@ -382,3 +531,7 @@
       & = #qty("5.27e-8", "C") \
   $
 ]
+
+
+= 电荷
+省略
