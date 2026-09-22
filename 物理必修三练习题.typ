@@ -1,9 +1,9 @@
 // #import "./itemplate/0.1.5/itemplate.typ": *
-// #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
+#import "@preview/itemplate:0.1.5": *
+#show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
-// #import "./theoframe/0.4.0/lib.typ": *
-#import "@preview/theoframe:0.4.0": *
+// #import "./theoframe/0.4.1/lib.typ": *
+#import "@preview/theoframe:0.4.1": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
 
 #import "@preview/unify:0.8.1": *
@@ -116,7 +116,7 @@
     kind: "diagram",
     supplement: [图],
   )[
-    #cetz.canvas(length: 1cm, {
+    #cetz.canvas(length: 0.8cm, {
       import cetz.draw: *
       set-style(line: (mark: (end: (symbol: "stealth", fill: black))))
       let (_P1, P0, P1, P2, P3, P4, P5, P6, P7, P8) = (
@@ -144,12 +144,12 @@
       content(P6, text(size: 8pt)[$Q_2$], anchor: "south", padding: 0.25cm)
       set-style(content: (
         frame: "circle",
-        padding: 1pt,
+        padding: 0.1pt,
         fill: gradient.radial(rgb("#eeeeee"), rgb("#449999")),
         stroke: none,
       ))
-      content(P0, [+])
-      content(P6, [-])
+      content(P0, text(size:6pt)[$ + $])
+      content(P6, text(size:8pt)[$ - $])
     })
   ]
   #set align(left)
@@ -174,23 +174,23 @@
   令：$E_x > 0$， 得：$x > 12 "或者" x < 4 ("舍去")$
 ]
 
-#html.elem(
-  "div",
-  attrs: (
-    style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
-    id: "electric-field-wrapper",
-    class: "three-animation",
-  ),
-  html.elem("canvas", attrs: (
-    id: "electric-field-canvas",
-    style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
-  )),
-)
-#html.elem("p", attrs: (id: "electric-field-text", style: "white-space: pre-wrap"))
-#html.script(
-  type: "module",
-  src: "../electric-field.js",
-)
+// #html.elem(
+//   "div",
+//   attrs: (
+//     style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
+//     id: "electric-field-wrapper",
+//     class: "three-animation",
+//   ),
+//   html.elem("canvas", attrs: (
+//     id: "electric-field-canvas",
+//     style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
+//   )),
+// )
+// #html.elem("p", attrs: (id: "electric-field-text", style: "white-space: pre-wrap"))
+// #html.script(
+//   type: "module",
+//   src: "../electric-field.js",
+// )
 
 #note(name: [点电荷周围球面的采样方案])[
   平分极角和方位角方案：通过平分球坐标中的极角$phi$和方位角$theta$采样得到的采样点之间的直线距离是不相等的，这会导致靠近极角的位置单位面积上的采样点数量更多。
