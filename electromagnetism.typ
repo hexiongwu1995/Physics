@@ -1,6 +1,6 @@
 
-// #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
+#import "@preview/itemplate:0.1.5": *
+#show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
 
 #import "@preview/theoframe:0.4.1": *
@@ -21,7 +21,91 @@
 // #set page(paper: "a4", margin: 2cm)
 // #set heading(numbering: "1.")
 
+// #show math.equation.where(block: true): pad.with(bottom:0.1em)
+#show math.equation.where(block: true): set align(left)
+
+= 电势能和电势
+
+
+#problem(name:[电荷量q1 为$4 times 10^(-9)$ C 的试探电荷放在电场中的A 点，具有$6 times 10^(-8)$ J 的电势能。A 点的电势是多少？若把q2 为$-2 times 10^(-10)$ C 的试探电荷放在电场中的A 点，q2 所具有的电势能是多少？])[
+
+$ phi_A &= E_(p,1)/q_1 \ &= 15 "V" $ 
+
+$E_(p,2) &= q_2 dot phi_A \ &= -3 times 10^(-9) "J"$ \ 
+]
+
+#problem(
+  name: [如图所示，在电场强度为60  N/C 的匀强电场中有A、B、C 三个点，AB 为5 cm，BC 为 12 cm，其中AB 沿电场方向，BC 和电场方向的夹角为60°。将电荷量为$4 × 10^(-8)$ C 的正电荷从A 点移到B 点，再从B 点移到C 点，静电力做了多少功？若将该电荷沿直线由A 点移到C 点，静电力做的功又是多少？],
+)[
+  #set align(center)
+  #figure(
+    caption: [匀强电场中的静电力做功],
+    numbering: "1.",
+    kind: "diagram",
+    supplement: [图],
+  )[
+    #cetz.canvas(length: 1cm, {
+      import cetz.draw: *
+      let (P0, P1, P2, P3) = ((0, 4), (0, 3), (0, 2), (0, 1))
+      set-style(line: (
+        stroke: (paint: rgb("#55aaaa"), thickness: 1pt),
+        mark: (end: (symbol: "stealth", fill: rgb("#55aaaa"), scale: 0.5)),
+      ))
+      for p in (P0, P1, P2, P3) {
+        line(p, (rel: (4, 0), to: p))
+      }
+
+      let (A, B) = ((1, 1.5), (2, 1.5))
+      let C = (rel: (60deg, 2.4), to: (2, 1.5))
+      set-style(line: (stroke: (paint: rgb("#555555"), thickness: 1pt), mark: none))
+      line(A, B, C)
+      set-style(circle: (stroke: none, fill: black, radius: 2pt))
+      circle(A)
+      circle(B)
+      circle(C)
+      content(A, [A], padding: 2pt, anchor: "north-east")
+      content(B, [B], padding: 2pt, anchor: "north-west")
+      content(C, [C], padding: 2pt, anchor: "south-east")
+
+      let O = (rel: (1.5, 0), to: B)
+      line(B, O, stroke: (dash: "dashed", thickness: 0.5pt))
+      cetz.angle.angle(B, O, C, label: "60°", radius: 0.3, label-radius: 0.6)
+
+      let E = (3.5, 2.5)
+      content(E, [#text(fill: rgb("#55aaaa"))[E]])
+    })
+  ]
+  #set align(left)
+  #let q = 4e-8
+  #let E = 60
+  #let F_C = q * E
+  #let AB = 0.05
+  #let BC = 0.12
+  #let W_AB = F_C * AB
+  #let W_BC = F_C * BC * calc.cos(60deg)
+  #let W_total = W_AB + W_BC
+
+  $W_"AB" &= q E dot "AB" \ &= qty("1.2e-7", "J")$ \
+
+  $W_"BC" & = q E dot "BC" dot cos(60^o) \ & = qty("1.44e-7", "J")$ \
+
+  $W_"总" & = W_"AB" + W_"BC" \ & = qty("2.64e-7", "J")$ \
+静电力做功与路径无关，仅与电荷的初始和终止位置有关。 \ 
+所以，沿直线移动的时静电力做功同样等于上述数值。
+]
+
 = 电场和电场强度
+
+#problem(
+  name: [把试探电荷q 放到电场中的A 点，测得它所受的静电力为F ；再把它放到B 点，测得它所受的静电力为nF。A 点和B 点的电场强度之比 $E_A / E_B$ 是多少？再把另一个电荷量为nq 的试探电荷放到另一点C，测得它所受的静电力也是F。A 点和C 点的电场强度之比$E_A/E_C$ 是多少？
+  ],
+)[
+  在A点处：$F = q E_A$ \
+  在B点处：$n F = q E_B$ \
+  在C点处：$F = n q E_C$ \
+  $=> quad E_A /E_B = 1/n$ \ 
+  $=> quad E_A / E_C = n$ 
+]
 
 
 #problem(name: [用一条绝缘轻绳悬挂一个带正电小球，小球质量为$1.0×10^(-3)$  kg，所带电荷量为
@@ -148,8 +232,8 @@
         fill: gradient.radial(rgb("#eeeeee"), rgb("#449999")),
         stroke: none,
       ))
-      content(P0, text(size:6pt)[$ + $])
-      content(P6, text(size:8pt)[$ - $])
+      content(P0, text(size: 6pt)[$ + $])
+      content(P6, text(size: 8pt)[$ - $])
     })
   ]
   #set align(left)
@@ -174,23 +258,23 @@
   令：$E_x > 0$， 得：$x > 12 "或者" x < 4 ("舍去")$
 ]
 
-// #html.elem(
-//   "div",
-//   attrs: (
-//     style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
-//     id: "electric-field-wrapper",
-//     class: "three-animation",
-//   ),
-//   html.elem("canvas", attrs: (
-//     id: "electric-field-canvas",
-//     style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
-//   )),
-// )
-// #html.elem("p", attrs: (id: "electric-field-text", style: "white-space: pre-wrap"))
-// #html.script(
-//   type: "module",
-//   src: "../electric-field.js",
-// )
+#html.elem(
+  "div",
+  attrs: (
+    style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
+    id: "electric-field-wrapper",
+    class: "three-animation",
+  ),
+  html.elem("canvas", attrs: (
+    id: "electric-field-canvas",
+    style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
+  )),
+)
+#html.elem("p", attrs: (id: "electric-field-text", style: "white-space: pre-wrap"))
+#html.script(
+  type: "module",
+  src: "../electric-field.js",
+)
 
 #note(name: [点电荷周围球面的采样方案])[
   平分极角和方位角方案：通过平分球坐标中的极角$phi$和方位角$theta$采样得到的采样点之间的直线距离是不相等的，这会导致靠近极角的位置单位面积上的采样点数量更多。
@@ -398,8 +482,8 @@
   #set align(left)
   因为：
   q1 = q2 = q3 = q4 = q \
-  $ norm(arrow(F)_(12)) = norm(arrow(F)_(32)) = k q^2 / a^2 $ \
-  $ norm(arrow(F)_(42)) = k q^2 / (2 a^2) $ \
+  $ norm(arrow(F)_(12)) = norm(arrow(F)_(32)) = k q^2 / a^2 $ 
+  $ norm(arrow(F)_(42)) = k q^2 / (2 a^2) $ 
   $
     arrow(F)_(1232) & = arrow(F)_(12) + arrow(F)_(32) \
                     & = sqrt(2) dot k q^2 / a^2
