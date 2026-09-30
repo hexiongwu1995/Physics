@@ -4,8 +4,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { constants } from "fundamental-physical-constants";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { setCanvasSize, setGUIinWrapper, onResize } from "./three/setting.js";
-import { createLine } from "./three/utils.js";
+import { setCanvasSize, setGUIinWrapper, onResize } from "./setting.js";
+import { createLine } from "./utils.js";
 
 // =====================================================
 
