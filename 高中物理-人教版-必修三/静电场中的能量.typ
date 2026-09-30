@@ -1,6 +1,6 @@
 
-// #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
+#import "@preview/itemplate:0.1.5": *
+#show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
 
 
 #import "@preview/theoframe:0.4.1": *
@@ -19,7 +19,7 @@
 
 #set text(lang: "zh")
 // #set page(paper: "a4", margin: 2cm)
-#set heading(numbering: "1.")
+// #set heading(numbering: "1.")
 
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
 #show math.equation.where(block: true): set align(left)
