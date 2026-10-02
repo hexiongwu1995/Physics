@@ -33,7 +33,7 @@
   ```
   math[display="block"] {
   max-width: 100%;
-    font-size: clamp(0.7rem, 2.5vw, 1rem);
+    font-size: clamp(0.6rem, 3.0vw, 1rem);
     font-weight: 600;
   }```.text
 )
