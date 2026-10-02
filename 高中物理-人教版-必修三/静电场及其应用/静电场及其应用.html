@@ -25,20 +25,6 @@
   <link rel="stylesheet" href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css">
   <script src="./assets/script.js" defer></script>
   <style>
-    
-:has(> math[display="block"]) {
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-math[display="block"] {
-  /* display: block; */
-  max-width: 100%;
-  /* overflow-x: auto; */
-  font-size: clamp(0.7rem, 2.5vw, 1rem);  /* 根据视口宽度自动调整字体 */
-  font-weight: 500;
-}
-
     /* Alignment */
     mtable.right-align mtd,
     mtable mtd.right-align,
@@ -145,6 +131,13 @@ math[display="block"] {
               class="iconfont icon-print"></span></a><a class="iconfont-paintbrush"><span
               class="iconfont icon-paintbrush"></span></a></span></header>
       <article>
+        <style>
+          math [display="block"] {
+            max-width: 100%;
+            font-size: clamp(0.7rem, 2.5vw, 1rem);
+            font-weight: 500;
+          }
+        </style>
         <h2>静电场及其应用</h2>
         <h3>电荷</h3>
         <p>省略</p>
@@ -607,8 +600,7 @@ math[display="block"] {
                   </mover>
                   <mn>23</mn>
                 </msub>
-              </math>，力的方向如图所示。</p>
-              <math display="block">
+              </math>，力的方向如图所示。<br></p><math display="block">
               <mtable class="multiline-equation aligned">
                 <mtr>
                   <mtd>
@@ -737,7 +729,7 @@ math[display="block"] {
                   </mover>
                   <mtext>total</mtext>
                 </msub>
-              </math>，由图中的几何关系可知：</p><math display="block">
+              </math>，由图中的几何关系可知：<br></p><math display="block">
               <mtable class="multiline-equation aligned">
                 <mtr>
                   <mtd>
@@ -2998,7 +2990,7 @@ math[display="block"] {
                       transform="translate(19.463762174 18.399825166)"
                       d="M 0 0m 3.21340318 0c -1.773104461 0 -3.21340318 1.44029872 -3.21340318 3.21340318c 0 1.773104461 1.44029872 3.21340318 3.21340318 3.21340318c 1.773104461 0 3.21340318 -1.44029872 3.21340318 -3.21340318c 0 -1.773104461 -1.44029872 -3.21340318 -3.21340318 -3.21340318Z " />
                     <g transform="translate(20.243165329 19.515228283)">
-                      <g transform="matrix(1 0 0 -1 0.1 3.598)">
+                      <g transform="matrix(1 0 0 -1 0.100000025 3.598)">
                         <use xlink:href="#g74FF405FB431DCEF3F370A0DF105337" x="0" y="0" fill="#000000"
                           fill-rule="nonzero" />
                       </g>
@@ -3007,7 +2999,7 @@ math[display="block"] {
                       transform="translate(155.517651623 18.390722489)"
                       d="M 0 0m 3.222505857 0c -1.778127172 0 -3.222505857 1.444378685 -3.222505857 3.222505857c 0 1.778127172 1.444378685 3.222505857 3.222505857 3.222505857c 1.778127172 0 3.222505857 -1.444378685 3.222505857 -3.222505857c 0 -1.778127172 -1.444378685 -3.222505857 -3.222505857 -3.222505857Z " />
                     <g transform="translate(155.52815743 21.353228296)">
-                      <g transform="matrix(1 0 0 -1 0.1 2.26)">
+                      <g transform="matrix(1 0 0 -1 0.10000005 2.26)">
                         <use xlink:href="#gFB29965CA1A8576DB8FFD5C3EEA66B72" x="0" y="0" fill="#000000"
                           fill-rule="nonzero" />
                       </g>
@@ -3334,13 +3326,8 @@ math[display="block"] {
                       <mn>10</mn>
                       <mrow>
                         <mo>−</mo>
-                        <mn>8</mn>
+                        <mn>4</mn>
                       </mrow>
-                    </msup>
-                    <mo lspace="0.2222222222222222em" rspace="0.2222222222222222em">×</mo>
-                    <msup>
-                      <mn>10</mn>
-                      <mn>4</mn>
                     </msup>
                     <mrow>
                       <mo>(</mo>

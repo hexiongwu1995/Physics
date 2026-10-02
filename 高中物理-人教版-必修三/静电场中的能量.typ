@@ -29,6 +29,16 @@
 // #outline()
 
 
+#html.style(
+  ```
+  math [display="block"] {
+  max-width: 100%;
+    font-size: clamp(0.7rem, 2.5vw, 1rem);
+    font-weight: 500;
+  }```.text
+)
+
+
 // #html.elem(
 //   "div",
 //   attrs: (

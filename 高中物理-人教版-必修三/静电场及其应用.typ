@@ -1,6 +1,6 @@
 
-// #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "静电场及其应用", doc-author: "HeXiongwu", contents)
+#import "@preview/itemplate:0.1.5": *
+#show: contents => itemplate(doc-title: "静电场及其应用", doc-author: "HeXiongwu", contents)
 
 
 #import "lib.typ": *
@@ -23,11 +23,22 @@
 // #set heading(numbering: "1.")
 
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
-#show math.equation.where(block: true): set align(left)
+// #show math.equation.where(block: true): set align(left)
 
 #show heading.where(level: 1): set text(weight: "bold")
 #show heading.where(level: 2): set text(fill: rgb("#076b07"))
 // #outline()
+
+
+
+#html.style(
+  ```
+  math [display="block"] {
+  max-width: 100%;
+    font-size: clamp(0.7rem, 2.5vw, 1rem);
+    font-weight: 500;
+  }```.text
+)
 
 = 静电场及其应用
 
@@ -108,19 +119,23 @@
   #set align(left)
   如上图所示: 由于 q1, q2 和 q3所处的空间位置呈现出特定的对称关系，而且每个点电荷的电荷量都相等，从图示可以看出，q1, q2和q3的静电力大小都相等，仅方向不同。
 
-  取q3作为研究对象，记它受到来自q1的力为$arrow(F)_(13)$，记它受到来自q2的力为$arrow(F)_(23)$，力的方向如图所示。 \ 
+  取q3作为研究对象，记它受到来自q1的力为$arrow(F)_(13)$，记它受到来自q2的力为$arrow(F)_(23)$，力的方向如图所示。 \
   #let Q = 2e-6;
   #let r = 0.5;
   #let coulomb-constant = 1 / (4 * calc.pi * vacuum-electric-permittivity.val)
   #let F = coulomb-constant * Q * Q / calc.pow(r, 2)
-  $norm(arrow(F)_(13)) = norm(arrow(F)_(23)) & = k_e Q^2 / r^2 \
+  $
+    norm(arrow(F)_(13)) = norm(arrow(F)_(23)) & = k_e Q^2 / r^2 \
     & = #qty("8.98e9", "mF^-1") dot (#qty("2e-6", "C"))^2 /( #qty("5e-1", "m") )^2 \
-    & = #calc.round(F, digits: 3) "N"$
+    & = #calc.round(F, digits: 3) "N"
+  $
 
-  记 q3受到的静电力合力为$arrow(F)_"total"$，由图中的几何关系可知： \ 
-  $arrow(F)_"total" & = arrow(F)_(13) + arrow(F)_(23) \
+  记 q3受到的静电力合力为$arrow(F)_"total"$，由图中的几何关系可知： \
+  $
+    arrow(F)_"total" & = arrow(F)_(13) + arrow(F)_(23) \
                      & = sqrt(3) norm(arrow(F)_(13)) \
-                     & = #calc.round(calc.sqrt(3) * F, digits: 2) "N"$
+                     & = #calc.round(calc.sqrt(3) * F, digits: 2) "N"
+  $
 
   如图所示，$arrow(F)_"total"$的方向为向外的角平分线方向。 \
   由对称关系可知 q1 和 q2的静电力合力的大小等于$arrow(F)_"total"$的大小，方向为各自所在点处向外的角平分线方向。
@@ -486,7 +501,7 @@
 
     $ E_x = k dot 10^4 (Q_1/(x-0)^2 + Q_2/(x-6)^2 ) quad "定义域：" x > 6 $
     因为：$k &= qty("8.99e9", "N m^2 C^-2")$ \
-    则：$E_x &= 8.99 dot 10^9 times 1.0 dot 10^(-8) times 10^4 (4/x^2 - 1/(x-6)^2)$ \
+    则：$E_x &= 8.99 dot 10^9 times 1.0 dot 10^(-4) (4/x^2 - 1/(x-6)^2)$ \
     令：$E_x = 0$ \
     得等价表达式：$x^2 = 4(x-6)^2$ \
     即：$3 x^2 -48 x + 144 = 0$ \
