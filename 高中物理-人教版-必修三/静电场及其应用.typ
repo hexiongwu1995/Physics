@@ -1,10 +1,11 @@
 
-// #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "静电场及其应用", doc-author: "HeXiongwu", contents)
+#import "@preview/itemplate:0.1.5": *
+#show: contents => itemplate(doc-title: "静电场及其应用", doc-author: "HeXiongwu", contents)
 
 
-#import "@preview/theoframe:0.4.1": *
+#import "lib.typ": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
+#show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
 #import "@preview/unify:0.8.1": *
 
@@ -24,8 +25,8 @@
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
 #show math.equation.where(block: true): set align(left)
 
-#show heading.where(level:1):set text(weight:"bold")
-#show heading.where(level:2):set text(fill:rgb("#076b07"))
+#show heading.where(level: 1): set text(weight: "bold")
+#show heading.where(level: 2): set text(fill: rgb("#076b07"))
 // #outline()
 
 = 静电场及其应用

@@ -1,9 +1,10 @@
 
-// #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "静电场中的能量", doc-author: "HeXiongwu", contents)
+#import "@preview/itemplate:0.1.5": *
+#show: contents => itemplate(doc-title: "静电场中的能量", doc-author: "HeXiongwu", contents)
 
-#import "@preview/theoframe:0.4.1": *
+#import "lib.typ": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
+#show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
 #import "@preview/unify:0.8.1": *
 
