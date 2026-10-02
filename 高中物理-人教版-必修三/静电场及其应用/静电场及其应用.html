@@ -25,13 +25,18 @@
   <link rel="stylesheet" href="https://fred-wang.github.io/MathFonts/LatinModern/mathfonts.css">
   <script src="./assets/script.js" defer></script>
   <style>
-
+    
+:has(> math[display="block"]) {
+  overflow-x: auto;
+  max-width: 100%;
+}
 
 math[display="block"] {
   /* display: block; */
   max-width: 100%;
   /* overflow-x: auto; */
   font-size: clamp(0.7rem, 2.5vw, 1rem);  /* 根据视口宽度自动调整字体 */
+  font-weight: 500;
 }
 
     /* Alignment */
