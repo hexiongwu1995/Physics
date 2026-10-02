@@ -1,6 +1,6 @@
 
-#import "@preview/itemplate:0.1.5": *
-#show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
+// #import "@preview/itemplate:0.1.5": *
+// #show: contents => itemplate(doc-title: "静电场及其应用", doc-author: "HeXiongwu", contents)
 
 
 #import "@preview/theoframe:0.4.1": *

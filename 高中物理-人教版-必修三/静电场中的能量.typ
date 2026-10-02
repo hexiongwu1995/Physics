@@ -1,7 +1,6 @@
 
 // #import "@preview/itemplate:0.1.5": *
-// #show: contents => itemplate(doc-title: "物理必修三练习题", doc-author: "HeXiongwu", contents)
-
+// #show: contents => itemplate(doc-title: "静电场中的能量", doc-author: "HeXiongwu", contents)
 
 #import "@preview/theoframe:0.4.1": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
@@ -24,8 +23,8 @@
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
 #show math.equation.where(block: true): set align(left)
 
-#show heading.where(level:1):set text(weight:"bold")
-#show heading.where(level:2):set text(fill:rgb("#076b07"))
+#show heading.where(level: 1): set text(weight: "bold")
+#show heading.where(level: 2): set text(fill: rgb("#076b07"))
 // #outline()
 
 
@@ -197,17 +196,17 @@
 
 == 电势差
 
-#exercise(name:[
+#exercise(name: [
   在某电场中，已知A、B 两点之间的电势差$U_"AB"$ 为 20 V，q 为$－2×10^(-9)$ C 的电荷由A 点移动到B 点，静电力做的功是多少？电势能是增加还是减少，增加或者减少多少？
 ])[
-$W_"AB" &= q U_"AB" \ &= -4 times 10^(-8) "J"$ \
-静电力做负功，电势能增加。 \ 
-$W_"AB" = E_p (A) - E_p (B)$ \ 
-$=> E_p (B) = E_p (A) - W_"AB"$ \
-即电势能增加$4 times 10^(-8)$ J。
+  $W_"AB" &= q U_"AB" \ &= -4 times 10^(-8) "J"$ \
+  静电力做负功，电势能增加。 \
+  $W_"AB" = E_p (A) - E_p (B)$ \
+  $=> E_p (B) = E_p (A) - W_"AB"$ \
+  即电势能增加$4 times 10^(-8)$ J。
 ]
 
-#exercise(name:[
+#exercise(name: [
   在研究微观粒子时常用电子伏（eV）作为能量的单位。1  eV 等于一个电子经过1 V 电压加速后所增加的动能，那么，1  eV 等于多少焦耳？
 ])[
   $1 "eV" &= 1.602 times 10^(-19) "C" * 1 "V" \ &= 1.602 times 10^(-19) "J"$
@@ -219,4 +218,4 @@ $=> E_p (B) = E_p (A) - W_"AB"$ \
 == 电势差与电场强度的关系
 
 
-#pagebreak()
+// #pagebreak()
