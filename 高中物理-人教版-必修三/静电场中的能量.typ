@@ -29,6 +29,25 @@
 // #outline()
 
 
+// #html.elem(
+//   "div",
+//   attrs: (
+//     style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
+//     id: "equipotential-surface-wrapper",
+//     class: "three-animation",
+//   ),
+//   html.elem("canvas", attrs: (
+//     id: "equipotential-surface-canvas",
+//     style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
+//   )),
+// )
+// #html.elem("p", attrs: (id: "electric-field-text", style: "white-space: pre-wrap"))
+// #html.script(
+//   type: "module",
+//   src: "../../three/equipotential-surface.js",
+// )
+
+
 = 静电场中的能量
 
 == 电势能和电势
@@ -150,7 +169,7 @@
   name: [如图， A、B 为一对等量同种电荷连线上的两点（其中B 为中点），C 为连线中垂线上的一点。今将一个电荷量为q 的负点电荷自A 沿直线移到B 再沿直线移到C，请分析在此过程中该电荷的电势能的变化情况。],
 )[
   #figure(caption: [等量同种电荷所产生的电势分布], kind: "diagram", numbering: "1.", supplement: [图])[
-    #set text(size: 6pt)
+    #set text(size: 8pt)
     #cetz.canvas(length: 1cm, {
       import cetz.draw: *
       let (p1, p2) = ((-2, 0), (2, 0))
@@ -178,25 +197,26 @@
 
 == 电势差
 
+#exercise(name:[
+  在某电场中，已知A、B 两点之间的电势差$U_"AB"$ 为 20 V，q 为$－2×10^(-9)$ C 的电荷由A 点移动到B 点，静电力做的功是多少？电势能是增加还是减少，增加或者减少多少？
+])[
+$W_"AB" &= q U_"AB" \ &= -4 times 10^(-8) "J"$ \
+静电力做负功，电势能增加。 \ 
+$W_"AB" = E_p (A) - E_p (B)$ \ 
+$=> E_p (B) = E_p (A) - W_"AB"$ \
+即电势能增加$4 times 10^(-8)$ J。
+]
+
+#exercise(name:[
+  在研究微观粒子时常用电子伏（eV）作为能量的单位。1  eV 等于一个电子经过1 V 电压加速后所增加的动能，那么，1  eV 等于多少焦耳？
+])[
+  $1 "eV" &= 1.602 times 10^(-19) "C" * 1 "V" \ &= 1.602 times 10^(-19) "J"$
+]
 
 
 
 
+== 电势差与电场强度的关系
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#pagebreak()
