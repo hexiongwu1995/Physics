@@ -1,0 +1,7 @@
+math[display="block"] {
+  display: block;
+  max-width: 100%;
+  font-size: 1rem;  /* 基础字体大小 */
+  transform-origin: left center;
+  transition: transform 0.2s ease;
+}
