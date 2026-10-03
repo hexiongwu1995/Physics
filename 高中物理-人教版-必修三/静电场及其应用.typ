@@ -50,12 +50,12 @@
 
   math {
       font-size: clamp(0.6rem, 3.5vw, 1rem);
-      /* font-weight: 600; */
+      font-weight: 600; 
       }
   math[display="block"] {
      max-width: 100%;
      font-size: clamp(0.6rem, 3.5vw, 1rem);
-     font-weight: 550; 
+     font-weight: 600; 
      overflow-x: auto;
      overflow-y: hidden;
      scrollbar-width: none;        /* Firefox */
