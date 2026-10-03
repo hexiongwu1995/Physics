@@ -32,41 +32,45 @@
 
 #html.style(
   ```
-  p {
-    line-height: 1.5;
-    margin-bottom: 0.8em;
-  }
-
-  article div{
+    p {
       line-height: 1.5;
-    margin-bottom: 0.8em;
-  }
-
-  article li {
-    line-height: 1.5;
-    margin-bottom: 0.8em;
-  }
-
-  math {
-      font-size: clamp(0.6rem, 3.5vw, 1rem);
-      font-weight: 600; 
-      }
-  math[display="block"] {
-     max-width: 100%;
-     font-size: clamp(0.6rem, 3.5vw, 1rem);
-     font-weight: 600; 
-     overflow-x: auto;
-     overflow-y: hidden;
-     scrollbar-width: none;        /* Firefox */
-     -ms-overflow-style: none;     /* IE 10+ */
+      margin-bottom: 0.8em;
     }
-    math[display="block"]::-webkit-scrollbar {
-       display: none;           /* Chrome, Safari, Edge */
+
+    article div{
+        line-height: 1.5;
+      margin-bottom: 0.8em;
+    }
+
+    article li {
+      line-height: 1.5;
+      margin-bottom: 0.8em;
+    }
+
+    math {
+        font-size: clamp(0.6rem, 3.5vw, 1rem);
+        }
+    math[display="block"] {
+       max-width: 100%;
+       font-size: clamp(0.6rem, 3.5vw, 1rem);
+       overflow-x: auto;
+       overflow-y: hidden;
+       scrollbar-width: none;        /* Firefox */
+       -ms-overflow-style: none;     /* IE 10+ */
       }
-   math[display="block"] {
-      line-height: 1.2;
-    margin-bottom: 0.8em;
-   }
+      math[display="block"]::-webkit-scrollbar {
+         display: none;           /* Chrome, Safari, Edge */
+        }
+
+  math{
+      line-height: 1.5;
+      margin-bottom: 0.8em;
+  }
+
+     math[display="block"] {
+        line-height: 1.5;
+      margin-bottom: 0.8em;
+     }
   ```.text,
 )
 
