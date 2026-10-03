@@ -52,7 +52,7 @@
       ))[
         #strong()[#trans-supplement] #fig-number(kind, here()) #str(
           "  ",
-        ) #name #linebreak() #linebreak()  #content
+        ) #name #linebreak()  #content
       ]
     } else {
       if theoframe-theme.final().style == "minimal" {
@@ -225,7 +225,7 @@
         style: "border-radius: 10px; background: #f5f5f5; padding: 0.8em;",
       ))[
         #strong()[#trans-supplement] #fig-number(kind, here()) #str("  ")
-        #name #linebreak() #linebreak()
+        #name #linebreak()
         #content
       ]
     } else {
