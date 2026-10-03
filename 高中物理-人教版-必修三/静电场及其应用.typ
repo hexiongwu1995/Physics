@@ -33,22 +33,42 @@
 
 #html.style(
   ```
-  math {
-    font-size: clamp(0.6rem, 3.5vw, 1rem);
-    /* font-weight: 600; */
+    math {
+      font-size: clamp(0.6rem, 3.5vw, 1rem);
+      /* font-weight: 600; */
+      }
+    math[display="block"] {
+     max-width: 100%;
+     font-size: clamp(0.6rem, 3.5vw, 1rem);
+     /* font-weight: 600; */
+     overflow-x: auto;
+     overflow-y: hidden;
+     scrollbar-width: none;        /* Firefox */
+     -ms-overflow-style: none;     /* IE 10+ */
     }
-  math[display="block"] {
-   max-width: 100%;
-   font-size: clamp(0.6rem, 3.5vw, 1rem);
-   /* font-weight: 600; */
-   overflow-x: auto;
-   overflow-y: hidden;
-   scrollbar-width: none;        /* Firefox */
-   -ms-overflow-style: none;     /* IE 10+ */
+    math[display="block"]::-webkit-scrollbar {
+       display: none;           /* Chrome, Safari, Edge */
+      }
+
+  p {
+    line-height: 1.5;
+    margin-bottom: 0.8em;
   }
-  math[display="block"]::-webkit-scrollbar {
-     display: none;           /* Chrome, Safari, Edge */
-    }
+
+  div{
+      line-height: 1.5;
+    margin-bottom: 0.8em;
+  }
+
+   math[display="block"] {
+      line-height: 1.2;
+    margin-bottom: 0.8em;
+   }
+
+  article li {
+    line-height: 1.5;
+    margin-bottom: 0.8em;
+  }
   ```.text,
 )
 
@@ -519,7 +539,7 @@
   即：$3 x^2 -48 x + 144 = 0$ \
   即：$x^2 - 16 x + 48 = 0$ \
   即：$(x-4)(x-12) = 0$ \
-  解得：$x = 12 "或者" 4("舍去")$ \ 
+  解得：$x = 12 "或者" 4("舍去")$ \
   (2) 在$x>6$的范围内：
 
   $ E_x = k (Q_1/(x-0)^2 + Q_2/(x-6)^2 ) quad "定义域：" x > 6 $
