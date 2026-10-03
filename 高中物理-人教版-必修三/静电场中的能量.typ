@@ -32,45 +32,37 @@
 
 #html.style(
   ```
-    p {
-      line-height: 1.5;
-      margin-bottom: 0.8em;
-    }
+p {
+  line-height: 1.5;
+  margin-bottom: 0.8em;
+}
 
-    article div{
-        line-height: 1.5;
-      margin-bottom: 0.8em;
-    }
+article div {
+  line-height: 1.5;
+  margin-bottom: 0.8em;
+}
 
-    article li {
-      line-height: 1.5;
-      margin-bottom: 0.8em;
-    }
+article li {
+  line-height: 1.5;
+}
 
-    math {
-        font-size: clamp(0.6rem, 3.5vw, 1rem);
-        }
-    math[display="block"] {
-       max-width: 100%;
-       font-size: clamp(0.6rem, 3.5vw, 1rem);
-       overflow-x: auto;
-       overflow-y: hidden;
-       scrollbar-width: none;        /* Firefox */
-       -ms-overflow-style: none;     /* IE 10+ */
-      }
-      math[display="block"]::-webkit-scrollbar {
-         display: none;           /* Chrome, Safari, Edge */
-        }
+math {
+  font-size: clamp(0.6rem, 3.5vw, 1rem);
+  line-height: 1.5;
+  margin-bottom: 0.8em;
+}
 
-  math{
-      line-height: 1.5;
-      margin-bottom: 0.8em;
-  }
+math[display="block"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
 
-     math[display="block"] {
-        line-height: 1.5;
-      margin-bottom: 0.8em;
-     }
+math[display="block"]::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
   ```.text,
 )
 
