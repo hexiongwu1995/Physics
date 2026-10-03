@@ -33,14 +33,29 @@
 
 #html.style(
   ```
-    math {
+  p {
+    line-height: 1.5;
+    margin-bottom: 0.8em;
+  }
+
+  article div{
+      line-height: 1.5;
+    margin-bottom: 0.8em;
+  }
+
+  article li {
+    line-height: 1.5;
+    margin-bottom: 0.8em;
+  }
+
+  math {
       font-size: clamp(0.6rem, 3.5vw, 1rem);
       /* font-weight: 600; */
       }
-    math[display="block"] {
+  math[display="block"] {
      max-width: 100%;
      font-size: clamp(0.6rem, 3.5vw, 1rem);
-     /* font-weight: 600; */
+     font-weight: 550; 
      overflow-x: auto;
      overflow-y: hidden;
      scrollbar-width: none;        /* Firefox */
@@ -49,26 +64,10 @@
     math[display="block"]::-webkit-scrollbar {
        display: none;           /* Chrome, Safari, Edge */
       }
-
-  p {
-    line-height: 1.5;
-    margin-bottom: 0.8em;
-  }
-
-  div{
-      line-height: 1.5;
-    margin-bottom: 0.8em;
-  }
-
    math[display="block"] {
       line-height: 1.2;
     margin-bottom: 0.8em;
    }
-
-  article li {
-    line-height: 1.5;
-    margin-bottom: 0.8em;
-  }
   ```.text,
 )
 
