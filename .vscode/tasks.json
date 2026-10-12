@@ -1,0 +1,16 @@
+// .vscode/tasks.json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Export Bundle",
+      "type": "typst",
+      "command": "export",
+      "export": {
+        "format": "bundle",
+        "output": "${workspaceFolder}/out/html/${fileBasenameNoExtension}/"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
