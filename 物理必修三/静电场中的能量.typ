@@ -16,8 +16,8 @@
 #import "@preview/cetz:0.5.2"
 
 #show math.equation: set block(breakable: true)
-
-#set par(leading: 1em, spacing: 2em)
+#show enum: set enum(numbering: "(1)")
+#set par(leading: 1em, spacing: 1.5em)
 #set text(lang: "zh")
 // #set page(paper: "a4", margin: 2cm)
 // #set heading(numbering: "1.")
@@ -233,18 +233,18 @@
   #figure(kind: "diagram", numbering: none)[
     #cetz.canvas(length: 0.8cm, {
       import cetz.draw: *
-      let P = ( (-3,1),(-3,0),(-3,-1))
-      let B = (0,0)
-      let A = (-0.8,0)
-      let C = (-2,0)
+      let P = ((-3, 1), (-3, 0), (-3, -1))
+      let B = (0, 0)
+      let A = (-0.8, 0)
+      let C = (-2, 0)
       for p in P {
-        line(p, (rel:(6,0),to:p), mark:(end:(symbol:"stealth", fill:black)))
-        for p in (A,B,C) {
+        line(p, (rel: (6, 0), to: p), mark: (end: (symbol: "stealth", fill: black)))
+        for p in (A, B, C) {
           circle(p, radius: 2pt, fill: luma(50), stroke: none)
         }
-          content(A,[A], anchor: "south", padding: 5pt)
-          content(B,[B], anchor: "south", padding: 5pt)
-          content(C,[C], anchor: "south", padding: 5pt)
+        content(A, [A], anchor: "south", padding: 5pt)
+        content(B, [B], anchor: "south", padding: 5pt)
+        content(C, [C], anchor: "south", padding: 5pt)
       }
     })
   ]
@@ -274,5 +274,83 @@
 
 == 电势差与电场强度的关系
 
+
+
+#example(name: [
+  如图，真空中平行金属板M、N之间的距离d为0.04 m，有一个$2×10^(-15)$ kg 的带电粒子位于 M 板旁，粒子的电荷量为 $8×10^(-15)$ C，给两金属板加 200 V 直流电压。\
+  + 求带电粒子所受的静电力的大小。 \
+  + 求带电粒子从 M 板由静止开始运动到达 N 板时的速度。 \
+  + 如果两金属板距离增大为原来的 2 倍，其他条件不变，则上述问题（1）（2）的答案又如何？ \
+])[
+  #figure(kind: "diagram", numbering: none)[
+    #cetz.canvas(length: 0.8cm, {
+      import cetz.draw: *
+      let (A, B, C, D) = ((-3, 1), (3, 1), (-3, -2), (3, -2))
+      let (M, N) = ((-1, 1), (1, 1))
+      let (E, F) = ((-1, -2), (1, -2))
+      let U = (0, -2)
+      line(C, A, M)
+      line(N, B, D)
+      let arrow-mark = (end: (symbol: "stealth", fill: black, scale: 0.5))
+
+      circle(C, radius: 2pt, name: "positive")
+      circle(D, radius: 2pt, name: "negative")
+      line(E, "positive.east", mark: arrow-mark)
+      line(F, "negative.west", mark: arrow-mark)
+
+      line((rel: (0, -0.5), to: M), (rel: (0, 0.5), to: M))
+      line((rel: (0, -0.5), to: N), (rel: (0, 0.5), to: N))
+
+      content(U, [U])
+
+      content(C, [$+$], anchor: "north", padding: 5pt)
+      content(D, [$-$], anchor: "north", padding: 5pt)
+      content(M, [M], anchor: "south-east", padding: 5pt)
+      content(N, [N], anchor: "south-west", padding: 5pt)
+
+      circle(
+        (rel: (0.2, 0), to: M),
+        radius: 0.2,
+        stroke: none,
+        fill: gradient.radial(rgb("#ffffff"), rgb("#7fc260")),
+        name: "particle",
+      )
+      content("particle.center", [$ + $])
+      line("particle.east", (rel: (0.5, 0), to: ()), stroke: red + 1pt, mark: arrow-mark)
+    })
+  ]
+  (1) \
+  #let d = 0.04
+  #let m = 2e-15
+  #let q = 8e-15
+  #let U = 200
+  #let E = U / d
+  #let F = q * E
+  平行金属板之间的电场可视为匀强电场，电场强度为：$E = U/d = 5000 "V/m"$ \
+  带电粒子所受静电力为：$F = q E = 4.0 times 10^(-11) "N"$ \
+
+  (2) 忽略重力的影响，仅考虑静电力的作用：\
+  #let a = F / m
+  #let t = calc.sqrt(2 * d / a)
+  #let v = 0 + a * t
+  由于：$d = 1/2 a * t^2$，解得：$t = sqrt((2d)/a) = 0.002 "s"$ \
+  又因为：$v = a * t$，解得：$v = a * t = 40 "m/s"$ \
+
+  (3) \
+  #let d = 0.08
+  #let E = U / d
+  #let F = q * E
+  平行金属板之间的电场可视为匀强电场，电场强度为：$E = U/d = 2500 "V/m"$ \
+  带电粒子所受静电力为：$F = q E = 2.0 times 10^(-11) "N"$ \
+
+  忽略重力的影响，仅考虑静电力的作用：\
+  #let a = F / m
+  #let t = calc.sqrt(2 * d / a)
+  #let v = 0 + a * t
+  由于：$d = 1/2 a * t^2$，解得：$t = sqrt((2d)/a) = 0.004 "s"$ \
+  又因为：$v = a * t = sqrt(2 d a) = sqrt(2 d q E/m) = sqrt(2 d q U/(d m)) = sqrt((2 q U)/m)$ \
+  解得：$v = a * t = 40 "m/s"$ \
+  将距离增大至原来的 2 倍，其他条件不变。结果是静电力变为原来的$1/2$，到达N板时的速度不变。
+]
 
 // #pagebreak()
