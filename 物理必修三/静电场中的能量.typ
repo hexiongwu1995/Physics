@@ -380,7 +380,7 @@
 ])[
   #figure(kind: "diagram", numbering: none)[
     #set text(size: 8pt)
-    #cetz.canvas(length: 0.3cm, {
+    #cetz.canvas(length: 0.2cm, {
       import cetz.draw: *
 
       let (M, B) = ((-1, -0.5), (21, 0))
