@@ -19,6 +19,7 @@
 #show enum: set enum(numbering: "(1)")
 #set par(leading: 1em, spacing: 1.5em)
 #set text(lang: "zh")
+#set page(width:10cm, height:15cm, margin: 0.5cm)
 // #set page(paper: "a4", margin: 2cm)
 // #set heading(numbering: "1.")
 

@@ -1,0 +1,274 @@
+# 将仓库中的 PDF 部署为 OPDS 目录（GitHub Pages 静态托管）
+#
+# 一次性设置（首次运行前）：
+#   Settings → Pages → Build and deployment → Source 选择 "GitHub Actions"
+#
+# 生成脚本切换说明：
+#   - Node 脚本（默认启用）与 Python 脚本功能完全相同，二选一
+#   - 两个脚本同时启用会重复生成相同的 index.xml，务必只启用一个
+#   - 切换方法：注释掉整个 Node 步骤，再取消下方 Python 步骤的注释
+
+name: Deploy OPDS to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  # 站点基础地址（不带末尾斜杠），用于生成 OPDS 中的绝对链接
+  SITE_BASE: https://hexiongwu1995.github.io/Physics
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ========== 方案 A：Node 脚本（当前启用）==========
+      - name: Generate OPDS catalog (Node)
+        run: |
+          node <<'NODE_EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          const ROOT = process.cwd();
+          const BASE = (process.env.SITE_BASE || 'https://hexiongwu1995.github.io/Physics').replace(/\/+$/, '');
+          const NOW = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+
+          const NAV_TYPE = 'application/atom+xml;profile=opds-catalog;kind=navigation';
+          const ACQ_TYPE = 'application/atom+xml;profile=opds-catalog;kind=acquisition';
+
+          // XML 特殊字符转义
+          const esc = (s) => String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
+          // 按路径段做 URL 编码（中文、空格、· 等）
+          const enc = (p) => p.split('/').map(encodeURIComponent).join('/');
+
+          function entryXml(id, title, rel, href, type) {
+            return [
+              '  <entry>',
+              `    <id>${esc(id)}</id>`,
+              `    <title>${esc(title)}</title>`,
+              `    <updated>${NOW}</updated>`,
+              `    <link rel="${rel}" href="${esc(href)}" type="${esc(type)}"/>`,
+              '  </entry>'
+            ].join('\n');
+          }
+
+          function feedXml(id, title, selfHref, kind, entries) {
+            return [
+              '<?xml version="1.0" encoding="UTF-8"?>',
+              '<feed xmlns="http://www.w3.org/2005/Atom">',
+              `  <id>${esc(id)}</id>`,
+              `  <title>${esc(title)}</title>`,
+              `  <updated>${NOW}</updated>`,
+              '  <author><name>Physics</name></author>',
+              `  <link rel="self" href="${esc(selfHref)}" type="${esc(kind)}"/>`,
+              `  <link rel="start" href="${BASE}/index.xml" type="${NAV_TYPE}"/>`,
+              ...entries,
+              '</feed>'
+            ].join('\n');
+          }
+
+          // 递归扫描目录并生成 index.xml
+          // 返回值：'navigation' | 'acquisition' | null（空目录不生成）
+          function generate(dir) {
+            const names = fs.readdirSync(dir).filter((n) => !n.startsWith('.')).sort();
+            const rel = path.relative(ROOT, dir).split(path.sep).join('/');
+            const entries = [];
+            let kind = 'navigation';
+
+            for (const name of names) {
+              const full = path.join(dir, name);
+              if (!fs.statSync(full).isDirectory()) continue;
+              const childKind = generate(full);
+              if (childKind === null) continue;
+              const childRel = rel === '.' ? name : rel + '/' + name;
+              entries.push(entryXml(
+                `${BASE}/${enc(childRel)}/`,
+                name,
+                'subsection',
+                `${BASE}/${enc(childRel)}/index.xml`,
+                childKind === 'acquisition' ? ACQ_TYPE : NAV_TYPE
+              ));
+            }
+
+            for (const name of names.filter((n) => n.toLowerCase().endsWith('.pdf'))) {
+              const fileRel = rel === '.' ? name : rel + '/' + name;
+              entries.push(entryXml(
+                `${BASE}/${enc(fileRel)}`,
+                name.replace(/\.pdf$/i, ''),
+                'http://opds-spec.org/acquisition',
+                `${BASE}/${enc(fileRel)}`,
+                'application/pdf'
+              ));
+              kind = 'acquisition';
+            }
+
+            if (entries.length === 0) return null;
+
+            const feedRel = rel === '.' ? 'index.xml' : rel + '/index.xml';
+            const selfHref = `${BASE}/${enc(feedRel)}`;
+            fs.writeFileSync(
+              path.join(dir, 'index.xml'),
+              feedXml(
+                selfHref,
+                rel === '.' ? 'Physics' : path.basename(dir),
+                selfHref,
+                kind === 'acquisition' ? ACQ_TYPE : NAV_TYPE,
+                entries
+              ) + '\n'
+            );
+            console.log(`generated: ${feedRel} (${entries.length} entries, ${kind})`);
+            return kind;
+          }
+
+          generate(ROOT);
+          NODE_EOF
+
+      # ========== 方案 B：Python 脚本（默认注释掉，与方案 A 二选一）==========
+      # 取消注释方法：删掉每行开头的 "# " 即可（并注释掉上面的 Node 步骤）
+      # - name: Generate OPDS catalog (Python)
+      #   run: |
+      #     python3 <<'PY_EOF'
+      #     import os
+      #     from datetime import datetime, timezone
+      #     from urllib.parse import quote
+      #     from xml.sax.saxutils import escape
+      #
+      #     ROOT = os.getcwd()
+      #     BASE = os.environ.get("SITE_BASE", "https://hexiongwu1995.github.io/Physics").rstrip("/")
+      #     NOW = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+      #
+      #     NAV_TYPE = "application/atom+xml;profile=opds-catalog;kind=navigation"
+      #     ACQ_TYPE = "application/atom+xml;profile=opds-catalog;kind=acquisition"
+      #
+      #     def esc(s):
+      #         return escape(str(s), {'"': "&quot;"})
+      #
+      #     def enc(p):
+      #         return "/".join(quote(seg) for seg in p.split("/"))
+      #
+      #     def entry_xml(id_, title, rel, href, type_):
+      #         return "\n".join([
+      #             "  <entry>",
+      #             f"    <id>{esc(id_)}</id>",
+      #             f"    <title>{esc(title)}</title>",
+      #             f"    <updated>{NOW}</updated>",
+      #             f'    <link rel="{rel}" href="{esc(href)}" type="{esc(type_)}"/>',
+      #             "  </entry>",
+      #         ])
+      #
+      #     def feed_xml(id_, title, self_href, kind, entries):
+      #         return "\n".join([
+      #             '<?xml version="1.0" encoding="UTF-8"?>',
+      #             '<feed xmlns="http://www.w3.org/2005/Atom">',
+      #             f"  <id>{esc(id_)}</id>",
+      #             f"  <title>{esc(title)}</title>",
+      #             f"  <updated>{NOW}</updated>",
+      #             "  <author><name>Physics</name></author>",
+      #             f'  <link rel="self" href="{esc(self_href)}" type="{esc(kind)}"/>',
+      #             f'  <link rel="start" href="{BASE}/index.xml" type="{NAV_TYPE}"/>',
+      #             *entries,
+      #             "</feed>",
+      #         ]) + "\n"
+      #
+      #     # 递归扫描目录并生成 index.xml
+      #     # 返回值：'navigation' | 'acquisition' | None（空目录不生成）
+      #     def generate(dir_path):
+      #         names = sorted(n for n in os.listdir(dir_path) if not n.startswith("."))
+      #         rel = os.path.relpath(dir_path, ROOT).replace(os.sep, "/")
+      #         entries = []
+      #         kind = "navigation"
+      #
+      #         for name in names:
+      #             full = os.path.join(dir_path, name)
+      #             if not os.path.isdir(full):
+      #                 continue
+      #             child_kind = generate(full)
+      #             if child_kind is None:
+      #                 continue
+      #             child_rel = name if rel == "." else f"{rel}/{name}"
+      #             entries.append(entry_xml(
+      #                 f"{BASE}/{enc(child_rel)}/",
+      #                 name,
+      #                 "subsection",
+      #                 f"{BASE}/{enc(child_rel)}/index.xml",
+      #                 ACQ_TYPE if child_kind == "acquisition" else NAV_TYPE,
+      #             ))
+      #
+      #         for name in [n for n in names if n.lower().endswith(".pdf")]:
+      #             file_rel = name if rel == "." else f"{rel}/{name}"
+      #             entries.append(entry_xml(
+      #                 f"{BASE}/{enc(file_rel)}",
+      #                 os.path.splitext(name)[0],
+      #                 "http://opds-spec.org/acquisition",
+      #                 f"{BASE}/{enc(file_rel)}",
+      #                 "application/pdf",
+      #             ))
+      #             kind = "acquisition"
+      #
+      #         if not entries:
+      #             return None
+      #
+      #         feed_rel = "index.xml" if rel == "." else f"{rel}/index.xml"
+      #         self_href = f"{BASE}/{enc(feed_rel)}"
+      #         with open(os.path.join(dir_path, "index.xml"), "w", encoding="utf-8") as f:
+      #             f.write(feed_xml(
+      #                 self_href,
+      #                 "Physics" if rel == "." else os.path.basename(dir_path),
+      #                 self_href,
+      #                 ACQ_TYPE if kind == "acquisition" else NAV_TYPE,
+      #                 entries,
+      #             ))
+      #         print(f"generated: {feed_rel} ({len(entries)} entries, {kind})")
+      #         return kind
+      #
+      #     generate(ROOT)
+      #     PY_EOF
+
+      - name: Create .nojekyll (跳过 Jekyll 处理，保证中文路径可访问)
+        run: touch .nojekyll
+
+      - name: List generated feeds
+        run: |
+          find . -name index.xml | sort
+          echo '--- 根 Feed 预览 ---'
+          head -25 index.xml
+
+      - name: Remove .git (减小 Pages 构件体积)
+        run: rm -rf .git
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
