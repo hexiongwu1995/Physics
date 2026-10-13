@@ -1,12 +1,15 @@
-# 将仓库中的 PDF 部署为 OPDS 目录（GitHub Pages 静态托管）
+# 将「物理必修三」中的 Typst 源文件在云端编译为 PDF，并部署为 OPDS 目录（GitHub Pages 静态托管）
 #
 # 一次性设置（首次运行前）：
 #   Settings → Pages → Build and deployment → Source 选择 "GitHub Actions"
 #
-# 生成脚本切换说明：
-#   - Node 脚本（默认启用）与 Python 脚本功能完全相同，二选一
-#   - 两个脚本同时启用会重复生成相同的 index.xml，务必只启用一个
-#   - 切换方法：注释掉整个 Node 步骤，再取消下方 Python 步骤的注释
+# 流程说明：
+#   1. 安装 Typst CLI（版本与本机一致，见 env.TYPST_VERSION）
+#   2. 安装中文字体：霞鹜文楷（LXGW WenKai，楷体风格）+ Noto CJK 兜底
+#   3. 恢复 @local 本地包（itemplate / theoframe，已提交到 packages/typst/local/）
+#   4. 为每个 .typ 注入页面尺寸与字体设置（幂等：已存在则跳过）
+#   5. 编译 PDF 到 dist/物理必修三/（只部署编译产物，不收录仓库已有 PDF）
+#   6. 在 dist/ 中递归生成 OPDS 目录（index.xml）
 
 name: Deploy OPDS to GitHub Pages
 
@@ -27,6 +30,14 @@ concurrency:
 env:
   # 站点基础地址（不带末尾斜杠），用于生成 OPDS 中的绝对链接
   SITE_BASE: https://hexiongwu1995.github.io/Physics
+  # Typst CLI 版本（与本机保持一致）
+  TYPST_VERSION: "0.15.1"
+  # Typst 源文件所在目录（只处理其中的 .typ 文件）
+  TYPST_SRC_DIR: 物理必修三
+  # 编译产物与 OPDS 输出目录（Pages 构件内容）
+  DIST_DIR: dist
+  # 霞鹜文楷版本（楷体风格开源字体，云端替代 KaiTi）
+  LXGW_WENKAI_VERSION: v1.522
 
 jobs:
   build:
@@ -35,14 +46,85 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ========== 方案 A：Node 脚本（当前启用）==========
+      - name: Setup Typst CLI
+        uses: typst-community/setup-typst@v5
+        with:
+          typst-version: ${{ env.TYPST_VERSION }}
+
+      - name: Install CJK fallback fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+
+      - name: Download LXGW WenKai fonts
+        run: |
+          mkdir -p fonts
+          curl -fsSL -o fonts/LXGWWenKai-Regular.ttf \
+            "https://github.com/lxgw/LxgwWenKai/releases/download/${LXGW_WENKAI_VERSION}/LXGWWenKai-Regular.ttf"
+          curl -fsSL -o fonts/LXGWWenKai-Medium.ttf \
+            "https://github.com/lxgw/LxgwWenKai/releases/download/${LXGW_WENKAI_VERSION}/LXGWWenKai-Medium.ttf"
+          ls -l fonts
+
+      - name: Install local typst packages
+        run: |
+          mkdir -p ~/.local/share/typst/packages/local
+          cp -r packages/typst/local/* ~/.local/share/typst/packages/local/
+
+      # 在第一个一级标题（= xxx）前一行插入页面尺寸与字体设置；
+      # 文件中已有对应设置时跳过（幂等），找不到一级标题则插到文件开头
+      - name: Inject page setup into typst files (Node)
+        run: |
+          node <<'NODE_EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          const SRC = process.env.TYPST_SRC_DIR;
+          const PAGE_LINE = '#set page(width:10cm, height:15cm, margin: 0.5cm)';
+          const FONT_LINE = '#set text(font: ("Libertinus Serif", "KaiTi", "LXGW WenKai"))';
+
+          for (const name of fs.readdirSync(SRC).sort()) {
+            if (!name.toLowerCase().endsWith('.typ')) continue;
+            const file = path.join(SRC, name);
+            const lines = fs.readFileSync(file, 'utf8').split('\n');
+
+            const hasPage = lines.some((l) => /^\s*#set\s+page\(/.test(l));
+            const hasFont = lines.some((l) => /^\s*#set\s+text\(\s*font/.test(l));
+            if (hasPage && hasFont) {
+              console.log(`skipped (settings already present): ${file}`);
+              continue;
+            }
+
+            // 插入位置：第一个一级标题行之前；找不到则插到文件开头
+            let at = lines.findIndex((l) => /^= /.test(l));
+            if (at < 0) at = 0;
+
+            const inject = [];
+            if (!hasPage) inject.push(PAGE_LINE, '');
+            if (!hasFont) inject.push(FONT_LINE, '');
+
+            lines.splice(at, 0, ...inject);
+            fs.writeFileSync(file, lines.join('\n'));
+            console.log(`injected at line ${at + 1}: ${file}`);
+          }
+          NODE_EOF
+
+      - name: Compile typst to PDF
+        run: |
+          mkdir -p "$DIST_DIR/$TYPST_SRC_DIR"
+          for f in "$TYPST_SRC_DIR"/*.typ; do
+            base="$(basename "$f" .typ)"
+            echo "compiling: $f"
+            typst compile --font-path fonts "$f" "$DIST_DIR/$TYPST_SRC_DIR/${base}.pdf"
+          done
+
+      # 递归扫描 dist 目录并生成 OPDS 目录（每个含内容的目录一个 index.xml）
       - name: Generate OPDS catalog (Node)
         run: |
           node <<'NODE_EOF'
           const fs = require('fs');
           const path = require('path');
 
-          const ROOT = process.cwd();
+          const ROOT = process.env.DIST_DIR;
           const BASE = (process.env.SITE_BASE || 'https://hexiongwu1995.github.io/Physics').replace(/\/+$/, '');
           const NOW = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
 
@@ -141,118 +223,14 @@ jobs:
           generate(ROOT);
           NODE_EOF
 
-      # ========== 方案 B：Python 脚本（默认注释掉，与方案 A 二选一）==========
-      # 取消注释方法：删掉每行开头的 "# " 即可（并注释掉上面的 Node 步骤）
-      # - name: Generate OPDS catalog (Python)
-      #   run: |
-      #     python3 <<'PY_EOF'
-      #     import os
-      #     from datetime import datetime, timezone
-      #     from urllib.parse import quote
-      #     from xml.sax.saxutils import escape
-      #
-      #     ROOT = os.getcwd()
-      #     BASE = os.environ.get("SITE_BASE", "https://hexiongwu1995.github.io/Physics").rstrip("/")
-      #     NOW = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-      #
-      #     NAV_TYPE = "application/atom+xml;profile=opds-catalog;kind=navigation"
-      #     ACQ_TYPE = "application/atom+xml;profile=opds-catalog;kind=acquisition"
-      #
-      #     def esc(s):
-      #         return escape(str(s), {'"': "&quot;"})
-      #
-      #     def enc(p):
-      #         return "/".join(quote(seg) for seg in p.split("/"))
-      #
-      #     def entry_xml(id_, title, rel, href, type_):
-      #         return "\n".join([
-      #             "  <entry>",
-      #             f"    <id>{esc(id_)}</id>",
-      #             f"    <title>{esc(title)}</title>",
-      #             f"    <updated>{NOW}</updated>",
-      #             f'    <link rel="{rel}" href="{esc(href)}" type="{esc(type_)}"/>',
-      #             "  </entry>",
-      #         ])
-      #
-      #     def feed_xml(id_, title, self_href, kind, entries):
-      #         return "\n".join([
-      #             '<?xml version="1.0" encoding="UTF-8"?>',
-      #             '<feed xmlns="http://www.w3.org/2005/Atom">',
-      #             f"  <id>{esc(id_)}</id>",
-      #             f"  <title>{esc(title)}</title>",
-      #             f"  <updated>{NOW}</updated>",
-      #             "  <author><name>Physics</name></author>",
-      #             f'  <link rel="self" href="{esc(self_href)}" type="{esc(kind)}"/>',
-      #             f'  <link rel="start" href="{BASE}/index.xml" type="{NAV_TYPE}"/>',
-      #             *entries,
-      #             "</feed>",
-      #         ]) + "\n"
-      #
-      #     # 递归扫描目录并生成 index.xml
-      #     # 返回值：'navigation' | 'acquisition' | None（空目录不生成）
-      #     def generate(dir_path):
-      #         names = sorted(n for n in os.listdir(dir_path) if not n.startswith("."))
-      #         rel = os.path.relpath(dir_path, ROOT).replace(os.sep, "/")
-      #         entries = []
-      #         kind = "navigation"
-      #
-      #         for name in names:
-      #             full = os.path.join(dir_path, name)
-      #             if not os.path.isdir(full):
-      #                 continue
-      #             child_kind = generate(full)
-      #             if child_kind is None:
-      #                 continue
-      #             child_rel = name if rel == "." else f"{rel}/{name}"
-      #             entries.append(entry_xml(
-      #                 f"{BASE}/{enc(child_rel)}/",
-      #                 name,
-      #                 "subsection",
-      #                 f"{BASE}/{enc(child_rel)}/index.xml",
-      #                 ACQ_TYPE if child_kind == "acquisition" else NAV_TYPE,
-      #             ))
-      #
-      #         for name in [n for n in names if n.lower().endswith(".pdf")]:
-      #             file_rel = name if rel == "." else f"{rel}/{name}"
-      #             entries.append(entry_xml(
-      #                 f"{BASE}/{enc(file_rel)}",
-      #                 os.path.splitext(name)[0],
-      #                 "http://opds-spec.org/acquisition",
-      #                 f"{BASE}/{enc(file_rel)}",
-      #                 "application/pdf",
-      #             ))
-      #             kind = "acquisition"
-      #
-      #         if not entries:
-      #             return None
-      #
-      #         feed_rel = "index.xml" if rel == "." else f"{rel}/index.xml"
-      #         self_href = f"{BASE}/{enc(feed_rel)}"
-      #         with open(os.path.join(dir_path, "index.xml"), "w", encoding="utf-8") as f:
-      #             f.write(feed_xml(
-      #                 self_href,
-      #                 "Physics" if rel == "." else os.path.basename(dir_path),
-      #                 self_href,
-      #                 ACQ_TYPE if kind == "acquisition" else NAV_TYPE,
-      #                 entries,
-      #             ))
-      #         print(f"generated: {feed_rel} ({len(entries)} entries, {kind})")
-      #         return kind
-      #
-      #     generate(ROOT)
-      #     PY_EOF
-
       - name: Create .nojekyll (跳过 Jekyll 处理，保证中文路径可访问)
-        run: touch .nojekyll
+        run: touch "$DIST_DIR/.nojekyll"
 
       - name: List generated feeds
         run: |
-          find . -name index.xml | sort
+          find "$DIST_DIR" -name index.xml | sort
           echo '--- 根 Feed 预览 ---'
-          head -25 index.xml
-
-      - name: Remove .git (减小 Pages 构件体积)
-        run: rm -rf .git
+          head -25 "$DIST_DIR/index.xml"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -260,7 +238,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
 
   deploy:
     runs-on: ubuntu-latest
