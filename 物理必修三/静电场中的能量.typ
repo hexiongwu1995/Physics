@@ -334,7 +334,7 @@
   #let t = calc.sqrt(2 * d / a)
   #let v = 0 + a * t
   由于：$d = 1/2 a * t^2$，解得：$t = sqrt((2d)/a) = 0.002 "s"$ \
-  又因为：$v = a * t$，解得：$v = a * t = 40 "m/s"$ \
+  又因为：$v = a * t$，解得：$v = a * t = sqrt(2 a d) = 40 "m/s"$ \
 
   (3) \
   #let d = 0.08
@@ -348,9 +348,12 @@
   #let t = calc.sqrt(2 * d / a)
   #let v = 0 + a * t
   由于：$d = 1/2 a * t^2$，解得：$t = sqrt((2d)/a) = 0.004 "s"$ \
-  又因为：$v = a * t = sqrt(2 d a) = sqrt(2 d q E/m) = sqrt(2 d q U/(d m)) = sqrt((2 q U)/m)$ \
-  解得：$v = a * t = 40 "m/s"$ \
-  将距离增大至原来的 2 倍，其他条件不变。结果是静电力变为原来的$1/2$，到达N板时的速度不变。
+  又因为速度：
+  #set math.equation(numbering:"(1)",supplement:[公式])
+  $ v = a * t = sqrt(2 a d) = sqrt(2 (q E)/m d) = sqrt(2 (q U)/(d m) d) = sqrt((2 q U)/m) $<velocity>
+  解得：$v = 40 "m/s"$ \
+  将距离增大至原来的 2 倍，其他条件不变。结果是静电力变为原来的$1/2$，到达N板时的速度不变。 \ 
+  由速度 @velocity 可知，粒子到达末端平行金属板的速度仅与粒子的带电量、平行金属板两端的电势差和粒子质量有关，与平行金属板之间的距离无关。
 ]
 
 // #pagebreak()
