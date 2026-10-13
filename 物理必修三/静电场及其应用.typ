@@ -18,7 +18,7 @@
 #show math.equation: set block(breakable: true)
 
 #set text(lang: "zh")
-#set page(width:10cm, height:15cm, margin: (x:0.5cm,y:2cm))
+#set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))
 // #set page(paper: "a4", margin: 2cm)
 // #set heading(numbering: "1.")
 

@@ -79,7 +79,7 @@ jobs:
           const path = require('path');
 
           const SRC = process.env.TYPST_SRC_DIR;
-          const PAGE_LINE = '#set page(width:10cm, height:15cm, margin: (x:0.5cm,y:2cm))';
+          const PAGE_LINE = '#set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))';
           const FONT_LINE = '#set text(font: ("Libertinus Serif", "KaiTi", "LXGW WenKai"))';
 
           for (const name of fs.readdirSync(SRC).sort()) {
