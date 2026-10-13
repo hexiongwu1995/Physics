@@ -505,22 +505,25 @@
   令：$E_x > 0$， 得：$x > 12 "或者" x < 4 ("舍去")$
 ]
 
-#html.elem(
-  "div",
-  attrs: (
-    style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
-    id: "electric-field-wrapper",
-    class: "three-animation",
-  ),
-  html.elem("canvas", attrs: (
-    id: "electric-field-canvas",
-    style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
-  )),
-)
-#html.script(
-  type: "module",
-  src: "../three/electric-field.js",
-)
+// 仅在导出 HTML 时嵌入 Three.js 动画容器（PDF 编译目标下 html 模块不可用）
+#context if target() == "html" {
+  html.elem(
+    "div",
+    attrs: (
+      style: "background: white; margin: 20px; width: 95%; aspect-ratio: 1.5; display: flex; justify-content: center; align-items: center; position: relative;",
+      id: "electric-field-wrapper",
+      class: "three-animation",
+    ),
+    html.elem("canvas", attrs: (
+      id: "electric-field-canvas",
+      style: "width: 100%; height: 100%; display: flex; justify-content: center; align-items: center",
+    )),
+  )
+  html.script(
+    type: "module",
+    src: "../three/electric-field.js",
+  )
+}
 
 #note(name: [点电荷周围球面的采样方案])[
   平分极角和方位角方案：通过平分球坐标中的极角$phi$和方位角$theta$采样得到的采样点之间的直线距离是不相等的，这会导致靠近极角的位置单位面积上的采样点数量更多。
