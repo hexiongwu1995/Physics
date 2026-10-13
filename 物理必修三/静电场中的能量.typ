@@ -360,4 +360,83 @@
   解得同样的表达式：$v = sqrt((2 q U)/m)$ \
 ]
 
-// #pagebreak()
+#exercise(name: [
+  空气是不导电的。但是如果空气中的电场很强，使得气体分子中带正、负电荷的微粒所受的方向相反的静电力很大，以至于分子“破碎”，空气中出现可以自由移动的电荷，空气就变成了导体。这个现象叫作空气的“击穿”。\
+
+  一次实验中，电压为 $4×10^4$ V 的直流电源的两极连在一对平行金属板上，如果把两金属板的距离减小到 1.3 cm，两板之间就会放电。这次实验中空气被击穿时的电场强度是多少？
+])[
+  #let U = 4e4
+  #let d = 1.3e-2
+  #let E = U / d
+  $ E = U / d = 3.08 times 10^6 "V/m" $
+]
+
+#exercise(name: [
+  带有等量异种电荷、相距 10 cm 的平行板 A 和 B 之间有匀强电场，电场强度 E 为 $2×10^4$ V/m，方向向下。电场中 C 点距
+  B 板 3 cm，D 点距 A 板 2 cm。 \
+  （1）C、D 两点哪点电势高？两点的电势差$U_"CD"$ 等于多少？ \
+  （2）如果把 B 板接地，则 C 点和 D 点的电势 $φ_C$ 和 $φ_D$ 各是多少？如果把 A 板接地，则 $φ_C$ 和 $φ_D$ 各是多少？在这两种情况中，$U_"CD"$ 相同吗？ \
+  （3）一个电子从 C 点移动到 D 点，静电力做多少功？如果使电子从 C 点先移到 P 点，再移到 D 点，静电力做的功是否会发生变化？ \
+])[
+  #figure(kind: "diagram", numbering: none)[
+    #set text(size: 8pt)
+    #cetz.canvas(length: 0.3cm, {
+      import cetz.draw: *
+
+      let (M, B) = ((-1, -0.5), (21, 0))
+      let (N, A) = ((-1, 10), (21, 10.5))
+      let (Q, R, S, T) = ((0, 10), (20 / 3, 10), (40 / 3, 10), (20, 10))
+      let (C, D, P) = ((10, 3), (10, 8), (20 / 6, 2.5))
+      let arrow-mark = (end: (symbol: "stealth", fill: rgb("#85b196"), scale: 0.5))
+      rect(N, A, fill: rgb("#caa044ce"), stroke: none)
+      rect(M, B, fill: rgb("#caa044ce"), stroke: none)
+      for p in (Q, R, S, T) {
+        set-style(line: (stroke: rgb("#85b196"), mark: arrow-mark))
+        line(p, (rel: (0, -10), to: p))
+      }
+
+      content(A, [A], anchor: "west", padding: 5pt)
+      content(B, [B], anchor: "west", padding: 5pt)
+      for p in (C, D, P) {
+        circle(p, radius: 2pt, stroke: none, fill: black)
+      }
+      content(C, [C], anchor: "west", padding: 5pt)
+      content(D, [D], anchor: "west", padding: 5pt)
+      content(P, [P], anchor: "west", padding: 5pt)
+    })
+  ]
+
+(1) D点比C点电势更高 \ 
+#let E = 2e4
+#let CD = 5e-2
+#let UCD = - E * CD
+
+电势差：$U_"CD" = - E * d_"CD" = -1000 "V"$ \
+
+(2) 如果把B板接地，即：取B板的电势作为零电势点 \ 
+#let CB = 3e-2
+#let DB = 8e-2
+#let UCB = E * CB 
+#let UDB = E * DB 
+$phi_C = phi_B + U_"CB" = 600 "V"$ \
+$phi_D = phi_B + U_"DB" = 1600 "V"$ \
+$U_"CD" = phi_C - phi_D = -1000 "V"$ \
+
+如果把A板接地，即：取A板的电势作为零电势点 \ 
+#let CA = 7e-2
+#let DA = 2e-2
+#let UCA = - E * CA 
+#let UDA = - E * DA 
+$phi_C = phi_A + U_"CA" = -1400 "V"$ \
+$phi_D = phi_A + U_"DA" = -400 "V"$ \
+$U_"CD" = phi_C - phi_D = -1000 "V"$ \
+在这两种情况下，$U_"CD"$ 相同。 \ 
+
+(3) 
+#let q = - elementary-charge.val
+#let WCD = q * UCD
+把电子从C点移动到D点，静电力做的功为：$W_"CD" = q U_"CD" = 1.602 times 10^(-16) "J" $ \ 
+如果使电子从 C 点先移到 P 点，再移到 D 点，静电力做的功不会发生变化，因为静电力做功与路径无关，仅与始末位置有关。
+]
+
+
