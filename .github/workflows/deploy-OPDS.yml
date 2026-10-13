@@ -171,7 +171,7 @@ jobs:
           // 返回值：'navigation' | 'acquisition' | null（空目录不生成）
           function generate(dir) {
             const names = fs.readdirSync(dir).filter((n) => !n.startsWith('.')).sort();
-            const rel = path.relative(ROOT, dir).split(path.sep).join('/');
+            const rel = (path.relative(ROOT, dir) || '.').split(path.sep).join('/');
             const entries = [];
             let kind = 'navigation';
 
