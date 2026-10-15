@@ -4,7 +4,7 @@
 #import "@local/itemplate:0.5.0": *
 #show: itemplate.with(doc-title: "静电场中的能量")
 
-#import "@preview/theoframe:0.4.2": *
+#import "@local/theoframe:0.4.2": *
 #show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
