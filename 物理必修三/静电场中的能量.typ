@@ -1,12 +1,15 @@
 
 #import "@preview/typewind:0.2.0": *
 
-#import "@local/itemplate:0.5.0": *
+#import "@preview/itemplate:0.5.0": *
 #show: itemplate.with(doc-title: "静电场中的能量")
 
-#import "@local/theoframe:0.4.2": *
+#import "@preview/theoframe:0.4.2": *
 #show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
+
+#import "@local/myutils:0.1.0":*
+#show: myutils-setup.with()
 
 #import "@preview/cetz:0.5.2"
 
@@ -18,7 +21,6 @@
 #import invaria.codata2022.universal: *
 #import invaria.codata2022.atomic-and-nuclear: *
 #import invaria.codata2022.electromagnetic: *
-
 
 #show math.equation: set block(breakable: true)
 #show enum: set enum(numbering: "(1)")
