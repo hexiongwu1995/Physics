@@ -1,7 +1,7 @@
 
 #import "@preview/typewind:0.2.0": *
 
-#import "@preview/itemplate:0.5.0": *
+#import "@local/itemplate:0.5.0": *
 #show: itemplate.with(doc-title: "静电场中的能量")
 
 #import "@preview/theoframe:0.4.2": *
@@ -34,9 +34,22 @@
 #show heading.where(level: 1): set text(weight: "bold")
 #show heading.where(level: 1): set text(fill: emerald-800)
 #show heading.where(level: 2): set text(fill: emerald-800)
-#show grid: it => if target() == "html" or target() == "bundle" {
-  html.frame(it)
-} else {it}
+
+// #context if target() == "html" or target() == "bundle" {
+//   html.elem(
+//     "style",
+//     ```css
+//     .grid {
+//       max-width: 100%;
+//       overflow-x:auto;
+//     }
+//     ```.text,
+//   )
+// }
+
+// #show grid: it => if target() == "html" or target() == "bundle" {
+//   html.elem("div", attrs:(class: "svg-graph"), html.frame(it))
+// } else { it }
 
 // #outline()
 
@@ -592,6 +605,7 @@
     }),
   )
   #set align(left)
+  #set text(size: 11pt)
   电容：$ C = Q/U $
   假设：电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。
 
@@ -606,5 +620,15 @@
 #exercise(name: [
   有一个已充电的电容器，两极板之间的电压为3 V，所带电荷量为 $4.5×10^(-4)$ C，此电容器的电容是多少？将电容器的电压降为 2 V，电容器的电容是多少？所带电荷量是多少？
 ])[
-
+  #let q1 = 4.5e-4
+  #let u1 = 3
+  #let u2 = 2
+  #let c = q1 / u1
+  #let q2 = c * u2
+  电容器的电容：$C = Q/U = 1.5 times 10^(-4) "F"$ \
+  电压降为2 V后，电容不变。 \
+  电荷量：$q_2 = C * U_2 = 3 times 10^(-4) "C"$
 ]
+
+
+
