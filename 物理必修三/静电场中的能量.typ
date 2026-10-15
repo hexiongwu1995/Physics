@@ -1,10 +1,16 @@
 
-#import "@local/itemplate:0.5.0": *
+#import "@preview/typewind:0.2.0": *
+
+#import "@preview/itemplate:0.5.0": *
 #show: itemplate.with(doc-title: "静电场中的能量")
 
-#import "@local/theoframe:0.4.2": *
-#show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
+#import "@preview/theoframe:0.4.2": *
+#show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
+
+#import "@preview/cetz:0.5.2"
+
+#import "@preview/zap:0.6.0"
 
 #import "@preview/unify:0.8.1": *
 
@@ -13,13 +19,12 @@
 #import invaria.codata2022.atomic-and-nuclear: *
 #import invaria.codata2022.electromagnetic: *
 
-#import "@preview/cetz:0.5.2"
 
 #show math.equation: set block(breakable: true)
 #show enum: set enum(numbering: "(1)")
 #set par(leading: 1em, spacing: 1.5em)
 #set text(lang: "zh")
-#set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))
+// #set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))
 // #set page(paper: "a4", margin: 2cm)
 // #set heading(numbering: "1.")
 
@@ -27,7 +32,8 @@
 // #show math.equation.where(block: true): set align(left)
 
 #show heading.where(level: 1): set text(weight: "bold")
-#show heading.where(level: 2): set text(fill: rgb("#076b07"))
+#show heading.where(level: 1): set text(fill: emerald-800)
+#show heading.where(level: 2): set text(fill: emerald-800)
 // #outline()
 
 
@@ -48,6 +54,7 @@
 //   type: "module",
 //   src: "../three/equipotential-surface.js",
 // )
+
 
 
 = 静电场中的能量
@@ -271,10 +278,7 @@
 ]
 
 
-
-
 == 电势差与电场强度的关系
-
 
 
 #example(name: [
@@ -407,41 +411,80 @@
     })
   ]
 
-(1) D点比C点电势更高 \ 
-#let E = 2e4
-#let CD = 5e-2
-#let UCD = - E * CD
+  (1) D点比C点电势更高 \
+  #let E = 2e4
+  #let CD = 5e-2
+  #let UCD = -E * CD
 
-电势差：$U_"CD" = - E * d_"CD" = -1000 "V"$ \
+  电势差：$U_"CD" = - E * d_"CD" = -1000 "V"$ \
 
-(2) 如果把B板接地，即：取B板的电势作为零电势点 \ 
-#let CB = 3e-2
-#let DB = 8e-2
-#let UCB = E * CB 
-#let UDB = E * DB 
-$phi_C = phi_B + U_"CB" = 600 "V"$ \
-$phi_D = phi_B + U_"DB" = 1600 "V"$ \
-$U_"CD" = phi_C - phi_D = -1000 "V"$ \
+  (2) 如果把B板接地，即：取B板的电势作为零电势点 \
+  #let CB = 3e-2
+  #let DB = 8e-2
+  #let UCB = E * CB
+  #let UDB = E * DB
+  $phi_C = phi_B + U_"CB" = 600 "V"$ \
+  $phi_D = phi_B + U_"DB" = 1600 "V"$ \
+  $U_"CD" = phi_C - phi_D = -1000 "V"$ \
 
-如果把A板接地，即：取A板的电势作为零电势点 \ 
-#let CA = 7e-2
-#let DA = 2e-2
-#let UCA = - E * CA 
-#let UDA = - E * DA 
-$phi_C = phi_A + U_"CA" = -1400 "V"$ \
-$phi_D = phi_A + U_"DA" = -400 "V"$ \
-$U_"CD" = phi_C - phi_D = -1000 "V"$ \
-在这两种情况下，$U_"CD"$ 相同。 \ 
+  如果把A板接地，即：取A板的电势作为零电势点 \
+  #let CA = 7e-2
+  #let DA = 2e-2
+  #let UCA = -E * CA
+  #let UDA = -E * DA
+  $phi_C = phi_A + U_"CA" = -1400 "V"$ \
+  $phi_D = phi_A + U_"DA" = -400 "V"$ \
+  $U_"CD" = phi_C - phi_D = -1000 "V"$ \
+  在这两种情况下，$U_"CD"$ 相同。 \
 
-(3) 
-#let q = - elementary-charge.val
-#let WCD = q * UCD
-把电子从C点移动到D点，静电力做的功为：$W_"CD" = q U_"CD" = 1.602 times 10^(-16) "J" $ \ 
-如果使电子从 C 点先移到 P 点，再移到 D 点，静电力做的功不会发生变化，因为静电力做功与路径无关，仅与始末位置有关。
+  (3)
+  #let q = -elementary-charge.val
+  #let WCD = q * UCD
+  把电子从C点移动到D点，静电力做的功为：$W_"CD" = q U_"CD" = 1.602 times 10^(-16) "J"$ \
+  如果使电子从 C 点先移到 P 点，再移到 D 点，静电力做的功不会发生变化，因为静电力做功与路径无关，仅与始末位置有关。
 ]
 
 
-这是一段测试文本，检查BooxReader中是否会更新 \ 
-这是第二段测试文本 \ 
-这是第三段测试文本 \ 
-这是第四段测试文本 \ 
+这是一段测试文本，检查BooxReader中是否会更新 \
+这是第二段测试文本 \
+这是第三段测试文本 \
+这是第四段测试文本 \
+
+== 电容器的电容
+
+#exercise(name: [
+  用图 10.4-1 的电路给电容器充、放电。开关 S 接通 1，稳定后改接 2，稳定后又改接 1，如此往复。下表记录了充、放电过程中某两个时刻通过电流表的电流方向，试根据该信息，在表格内各空格处填上合理的答案。
+])[
+  #figure(kind: "diagram", numbering: none)[
+
+    #zap.circuit({
+      import zap: *
+
+      // using one node ...
+      resistor("r1", (-2, 0))
+
+      // ... or using two nodes
+      resistor("r2", (1, 0), (4, 0))
+    })
+
+    #zap.circuit({
+      import zap: *
+
+      nobutton("b1", (0, 0), (3, 0), n: "o-*")
+      nobutton("b2", (3, 0), (6, 0), scale: (y: -1), n: "o-*")
+    })
+
+    #zap.circuit({
+      import zap: *
+
+      resistor("r1", (0, 0), (3, 0))
+      vsource("v1", "r1.out", (3, 3))
+    })
+
+    #zap.circuit({
+      import zap: *
+
+      resistor("r1", (1, 0), (4, 0), n: "o-*")
+    })
+  ]
+]
