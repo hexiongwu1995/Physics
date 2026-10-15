@@ -34,6 +34,10 @@
 #show heading.where(level: 1): set text(weight: "bold")
 #show heading.where(level: 1): set text(fill: emerald-800)
 #show heading.where(level: 2): set text(fill: emerald-800)
+#show grid: it => if target() == "html" or target() == "bundle" {
+  html.frame(it)
+} else {it}
+
 // #outline()
 
 
@@ -528,11 +532,11 @@
     columns: (auto, auto),
     rows: (auto, auto),
     gutter: 2mm,
-    inset:5mm,
+    inset: 5mm,
     cetz.canvas(length: 1.2cm, {
       import cetz.draw: *
       let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
-      line(o, p,stroke: cyan-300 + 1pt,)
+      line(o, p, stroke: cyan-300 + 1pt)
       group({
         set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
         line(o, x)
@@ -546,7 +550,7 @@
     cetz.canvas(length: 1.2cm, {
       import cetz.draw: *
       let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
-      line(p,(project:p,onto:(o,y)),stroke: cyan-300 + 1pt)
+      line(p, (project: p, onto: (o, y)), stroke: cyan-300 + 1pt)
       group({
         set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
         line(o, x)
@@ -557,10 +561,11 @@
       content(y, [C], anchor: "east", padding: 5pt)
       content(b, [图B])
     }),
+
     cetz.canvas(length: 1.2cm, {
       import cetz.draw: *
       let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
-      line(o, p,stroke: cyan-300 + 1pt)
+      line(o, p, stroke: cyan-300 + 1pt)
       group({
         set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
         line(o, x)
@@ -574,7 +579,7 @@
     cetz.canvas(length: 1.2cm, {
       import cetz.draw: *
       let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
-      line(p,(project:p,onto:(o,y)),stroke: cyan-300 + 1pt)
+      line(p, (project: p, onto: (o, y)), stroke: cyan-300 + 1pt)
       group({
         set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
         line(o, x)
@@ -584,21 +589,21 @@
       content(x, [Q], anchor: "north", padding: 5pt)
       content(y, [C], anchor: "east", padding: 5pt)
       content(b, [图D])
-    })
+    }),
   )
-#set align(left)
-电容：$ C = Q/U $
-假设：电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。 
+  #set align(left)
+  电容：$ C = Q/U $
+  假设：电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。
 
-电容器充电时：$Q = C * U$，这是一个一元一次函数，电荷量 Q 随电压 U 增加而等比例增加。
+  电容器充电时：$Q = C * U$，这是一个一元一次函数，电荷量 Q 随电压 U 增加而等比例增加。
 
-图A错误，图B和图D正确，因为电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。 
+  图A错误，图B和图D正确，因为电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。
 
-图C正确，电容器充电时，电荷量 Q 随电压 U 增加而等比例增加。
+  图C正确，电容器充电时，电荷量 Q 随电压 U 增加而等比例增加。
 ]
 
 
-#exercise(name:[
+#exercise(name: [
   有一个已充电的电容器，两极板之间的电压为3 V，所带电荷量为 $4.5×10^(-4)$ C，此电容器的电容是多少？将电容器的电压降为 2 V，电容器的电容是多少？所带电荷量是多少？
 ])[
 
