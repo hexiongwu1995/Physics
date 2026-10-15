@@ -445,46 +445,161 @@
 ]
 
 
-这是一段测试文本，检查BooxReader中是否会更新 \
-这是第二段测试文本 \
-这是第三段测试文本 \
-这是第四段测试文本 \
-
 == 电容器的电容
 
 #exercise(name: [
-  用图 10.4-1 的电路给电容器充、放电。开关 S 接通 1，稳定后改接 2，稳定后又改接 1，如此往复。下表记录了充、放电过程中某两个时刻通过电流表的电流方向，试根据该信息，在表格内各空格处填上合理的答案。
+  用图示电路给电容器充、放电。开关 S 接通 1，稳定后改接 2，稳定后又改接 1，如此往复。下表记录了充、放电过程中某两个时刻通过电流表的电流方向，试根据该信息，在表格内各空格处填上合理的答案。
 ])[
   #figure(kind: "diagram", numbering: none)[
 
-    #zap.circuit({
+    #set text(size: 7pt)
+    #zap.circuit(length: 0.5cm, {
       import zap: *
+      import cetz.draw: *
+      let cin = (0, 0)
+      let cout = (0, 4.5)
+      let rl = (2, 0)
+      let rr = (8, 0)
+      let p1 = (3, 4.5)
+      let p2 = (3, 3.5)
+      let sl = (2.5, 4)
+      let sr = (3.5, 4)
+      let al = (3.5, 4)
+      let ar = (8, 4)
+      let vb = (10, 0)
+      let vt = (10, 4)
 
-      // using one node ...
-      resistor("r1", (-2, 0))
-
-      // ... or using two nodes
-      resistor("r2", (1, 0), (4, 0))
-    })
-
-    #zap.circuit({
-      import zap: *
-
-      nobutton("b1", (0, 0), (3, 0), n: "o-*")
-      nobutton("b2", (3, 0), (6, 0), scale: (y: -1), n: "o-*")
-    })
-
-    #zap.circuit({
-      import zap: *
-
-      resistor("r1", (0, 0), (3, 0))
-      vsource("v1", "r1.out", (3, 3))
-    })
-
-    #zap.circuit({
-      import zap: *
-
-      resistor("r1", (1, 0), (4, 0), n: "o-*")
+      cell("b", cin, cout, label: $E$)
+      wire(cout, p1, label: "1")
+      wire(cin, rl)
+      swire(rl, p2, axis: "y")
+      wire(sl, sr)
+      ammeter("am", al, ar, n: "o-*")
+      resistor("r", rl, rr, label: (content: $R$, anchor: "north", distance: 3pt), n: "*-*")
+      capacitor("c", rr, ar, label: (content: $C$, anchor: "east", distance: 8pt), n: "*-*")
+      wire(ar, vt)
+      wire(rr, vb)
+      voltmeter("vm", vb, vt)
+      content(p1, $1$, anchor: "south-east", padding: 3pt)
+      content(p2, $2$, anchor: "north-east", padding: 3pt)
+      content(sr, $S$, anchor: "south", padding: 4pt)
     })
   ]
+
+  #table(
+    columns: (0.5fr, 1fr, 1fr, 1fr, 1fr, 2fr, 1fr),
+    rows: (3cm, 3cm, 3cm),
+    // fill: (x, y) => {
+    //   if y == 0 {
+    //     emerald-100
+    //   } else if (y == 1) {
+    //     emerald-50
+    //   } else if (y == 2) {
+    //     emerald-100
+    //   }
+    // },
+    [时刻],
+    [在此时刻通过图中电流表的电流方向],
+    [电流表中的电流正在增大还是减小],
+    [开关 S 当前正在接通 1 还是接通 2],
+    [电容器两端的电压正在增大还是减小],
+    [整个电路中的能量正在怎样转化],
+    [这个时候电容器是在充电还是在放电],
+
+    [$t_1$], [向左], [减小], [接通2], [减小], [电容器中的电能在电流经过电阻时被全部转化为热能？], [放电],
+
+    [$t_2$],
+    [向右],
+    [减小],
+    [接通1],
+    [增大],
+    [电池的电能一部分转化为电容器中的电能，还有一部分在经过电阻时被转化为热能？],
+    [充电],
+  )
+]
+
+
+#exercise(name: [
+  有人用图描述某电容器充电时，其电荷量 Q、电压 U、电容 C 之间的相互关系，请判断它们的正误，并说明理由。
+])[
+  #set text(size: 8pt)
+  #set align(center)
+  #grid(
+    columns: (auto, auto),
+    rows: (auto, auto),
+    gutter: 2mm,
+    inset:5mm,
+    cetz.canvas(length: 1.2cm, {
+      import cetz.draw: *
+      let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
+      line(o, p,stroke: cyan-300 + 1pt,)
+      group({
+        set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
+        line(o, x)
+        line(o, y)
+      })
+      content(o, [O], anchor: "north-east")
+      content(x, [Q], anchor: "north", padding: 5pt)
+      content(y, [C], anchor: "east", padding: 5pt)
+      content(b, [图A])
+    }),
+    cetz.canvas(length: 1.2cm, {
+      import cetz.draw: *
+      let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
+      line(p,(project:p,onto:(o,y)),stroke: cyan-300 + 1pt)
+      group({
+        set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
+        line(o, x)
+        line(o, y)
+      })
+      content(o, [O], anchor: "north-east")
+      content(x, [U], anchor: "north", padding: 5pt)
+      content(y, [C], anchor: "east", padding: 5pt)
+      content(b, [图B])
+    }),
+    cetz.canvas(length: 1.2cm, {
+      import cetz.draw: *
+      let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
+      line(o, p,stroke: cyan-300 + 1pt)
+      group({
+        set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
+        line(o, x)
+        line(o, y)
+      })
+      content(o, [O], anchor: "north-east")
+      content(x, [U], anchor: "north", padding: 5pt)
+      content(y, [Q], anchor: "east", padding: 5pt)
+      content(b, [图C])
+    }),
+    cetz.canvas(length: 1.2cm, {
+      import cetz.draw: *
+      let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
+      line(p,(project:p,onto:(o,y)),stroke: cyan-300 + 1pt)
+      group({
+        set-style(line: (mark: (end: (symbol: ">>", fill: black, scale: 0.5))))
+        line(o, x)
+        line(o, y)
+      })
+      content(o, [O], anchor: "north-east")
+      content(x, [Q], anchor: "north", padding: 5pt)
+      content(y, [C], anchor: "east", padding: 5pt)
+      content(b, [图D])
+    })
+  )
+#set align(left)
+电容：$ C = Q/U $
+假设：电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。 
+
+电容器充电时：$Q = C * U$，这是一个一元一次函数，电荷量 Q 随电压 U 增加而等比例增加。
+
+图A错误，图B和图D正确，因为电容器的电容 C 是物理器件的固有属性，在充电过程中保持不变。 
+
+图C正确，电容器充电时，电荷量 Q 随电压 U 增加而等比例增加。
+]
+
+
+#exercise(name:[
+  有一个已充电的电容器，两极板之间的电压为3 V，所带电荷量为 $4.5×10^(-4)$ C，此电容器的电容是多少？将电容器的电压降为 2 V，电容器的电容是多少？所带电荷量是多少？
+])[
+
 ]
