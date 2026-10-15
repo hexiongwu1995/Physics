@@ -545,7 +545,6 @@
     columns: (auto, auto),
     rows: (auto, auto),
     gutter: 2mm,
-    inset: 5mm,
     cetz.canvas(length: 1.2cm, {
       import cetz.draw: *
       let (o, x, y, p, b) = ((0, 0), (1.5, 0), (0, 1.5), (1, 1), (0.75, -0.5))
