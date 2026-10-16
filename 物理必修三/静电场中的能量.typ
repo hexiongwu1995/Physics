@@ -8,7 +8,7 @@
 #show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
-#import "@local/myutils:0.1.0":*
+#import "@local/myutils:0.1.0": *
 #show: myutils-setup.with()
 
 #import "@preview/cetz:0.5.2"
@@ -631,5 +631,13 @@
   电荷量：$q_2 = C * U_2 = 3 times 10^(-4) "C"$
 ]
 
+#exercise(name: [
+  心室纤颤是一种可能危及生命的疾病。一种叫作心脏除颤器的设备，通过一个充电的电容器对心颤患者皮肤上的两个电极板放电，让一部分电荷通过心脏，使心脏完全停止跳动，再刺激心颤患者的心脏恢复正常跳动。
 
+  下图是一次心脏除颤器的模拟治疗，该心脏除颤器的电容器电容为 15 μF，如果充电后电容器的电压为 4.0 kV，电容器在一定时间内放电至两极板之间的电压为 0，这次放电有多少电荷量通过人体组织？
+  #set align(center)
+  #image("./assets/心脏除颤器.png", width: 40%)
+])[
+  电荷量：$Q = C * U = 0.06 "C"$
+]
 
