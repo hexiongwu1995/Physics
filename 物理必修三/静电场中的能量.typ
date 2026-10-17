@@ -619,7 +619,7 @@
 
   下图是一次心脏除颤器的模拟治疗，该心脏除颤器的电容器电容为 15 μF，如果充电后电容器的电压为 4.0 kV，电容器在一定时间内放电至两极板之间的电压为 0，这次放电有多少电荷量通过人体组织？
   #set align(center)
-  #image("/assets/心脏除颤器.png", width: 40%)
+  #image("../assets/心脏除颤器.png", width: 40%)
 ])[
   电荷量：$Q = C * U = 0.06 "C"$
 ]
@@ -638,7 +638,7 @@
 ])[
   #set align(center)
 
-  #image("/assets/直线加速器.png")
+  #image("../assets/直线加速器.png")
 
   #set align(left)
 
@@ -665,7 +665,7 @@
   如图10.5-2，两相同极板A 与B的长度l 为 6.0 cm，相距d为2 cm，极板间的电压U为200 V。一个电子沿平行于板面的方向射入电场中，射入时的速度 $v_0$ 为 $3.0×10^7$ m/s。把两板间的电场看作匀强电场，求电子射出电场时沿垂直于板面方向偏移的距离 y 和偏转的角度 θ。
 ])[
   #set align(center)
-  #image("/assets/带电粒子在电场中的偏转.png", width: 50%)
+  #image("../assets/带电粒子在电场中的偏转.png", width: 50%)
   #set align(left)
 
   电场强度：$E = U/d$，方向为竖直向下。
