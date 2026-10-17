@@ -8,8 +8,7 @@
 #show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
-#import "@local/myutils:0.1.0": *
-#show: myutils-setup.with()
+
 
 #import "@preview/cetz:0.5.2"
 
@@ -613,6 +612,8 @@
   电荷量：$q_2 = C * U_2 = 3 times 10^(-4) "C"$
 ]
 
+
+
 #exercise(name: [
   心室纤颤是一种可能危及生命的疾病。一种叫作心脏除颤器的设备，通过一个充电的电容器对心颤患者皮肤上的两个电极板放电，让一部分电荷通过心脏，使心脏完全停止跳动，再刺激心颤患者的心脏恢复正常跳动。
 
@@ -625,6 +626,8 @@
 
 == 带电粒子在电场中的运动
 
+
+
 #exercise(name: [
   如图 10.5-1 甲，某装置中，多个横截面积相同的金属圆筒依次排列，其中心轴线在同一直线上，圆筒的长度依照一定的规律依次增加。序号为奇数的圆筒和交流电源的一个极相连，序号为偶数的圆筒和该电源的另一个极相连。
 
@@ -634,7 +637,9 @@
   为使电子运动到圆筒与圆筒之间各个间隙中都能恰好使静电力的方向跟运动方向相同而不断加速，圆筒长度的设计必须遵照一定的规律。若已知电子的质量为 m、电子电荷量为 e、电压的绝对值为 u、周期为 T，电子通过圆筒间隙的时间可以忽略不计。则金属圆筒的长度和它的序号之间有什么定量关系？第 n 个金属圆筒的长度应该是多少？
 ])[
   #set align(center)
+
   #image("/assets/直线加速器.png")
+
   #set align(left)
 
   分析： 如图 10.5-1，由于金属导体内部的电场强度等于 0，电子在各个金属圆筒内部都不受静电力的作用，它在圆筒内的运动是匀速直线运动，只是在相邻圆筒的间隙中才会被加速。
@@ -663,22 +668,22 @@
   #image("/assets/带电粒子在电场中的偏转.png", width: 50%)
   #set align(left)
 
-电场强度：$E = U/d$，方向为竖直向下。
+  电场强度：$E = U/d$，方向为竖直向下。
 
-电子所受静电力为：$F = e * E$，方向为竖直向上。
+  电子所受静电力为：$F = e * E$，方向为竖直向上。
 
-电子在水平方向的速度分量为：$v_x = v_0$，射出电场所需时间为：$t = l / v_0$
+  电子在水平方向的速度分量为：$v_x = v_0$，射出电场所需时间为：$t = l / v_0$
 
-电子在y方向是匀变速直线运动，速度分量为：$v_y = a t = (e E)/m t = (e U t)/(m d)$
+  电子在y方向是匀变速直线运动，速度分量为：$v_y = a t = (e E)/m t = (e U t)/(m d)$
 
 
-电子射出电场时，在y方向的偏转距离为：
-$ y &= 1/2 a t^2 = 1/2 (e E)/m t^2 = 1/2 (e E l^2)/(m v_0^2) = 1/2 (e U l^2)/(m d v_0^2) = 0.35 "cm" $
+  电子射出电场时，在y方向的偏转距离为：
+  $ y & = 1/2 a t^2 = 1/2 (e E)/m t^2 = 1/2 (e E l^2)/(m v_0^2) = 1/2 (e U l^2)/(m d v_0^2) = 0.35 "cm" $
 
-电子射出电场时的偏转角为：
-$ theta = arctan(v_y / v_x) = arctan((e U l)/(m d v_0^2)) = 6.7 degree $
+  电子射出电场时的偏转角为：
+  $ theta = arctan(v_y / v_x) = arctan((e U l)/(m d v_0^2)) = 6.7 degree $
 
-#let y = 1/2 * (elementary-charge.val * 200 * calc.pow(6e-2,2) )/ (electron-mass.val * 2e-2 * calc.pow(3e7,2))
+  #let y = 1 / 2 * (elementary-charge.val * 200 * calc.pow(6e-2, 2)) / (electron-mass.val * 2e-2 * calc.pow(3e7, 2))
 
-#let theta- = calc.atan(elementary-charge.val * 200 * 6e-2/(electron-mass.val * 2e-2 * calc.pow(3e7,2)))
+  #let theta- = calc.atan(elementary-charge.val * 200 * 6e-2 / (electron-mass.val * 2e-2 * calc.pow(3e7, 2)))
 ]
