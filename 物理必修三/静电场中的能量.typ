@@ -1,8 +1,8 @@
 
 #import "@preview/typewind:0.2.0": *
 
-#import "@preview/itemplate:0.5.0": *
-#show: itemplate.with(doc-title: "静电场中的能量")
+// #import "@preview/itemplate:0.5.0": *
+// #show: itemplate.with(doc-title: "静电场中的能量")
 
 #import "@preview/theoframe:0.4.2": *
 #show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
@@ -27,7 +27,7 @@
 #set par(leading: 1em, spacing: 1.5em)
 #set text(lang: "zh")
 // #set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))
-// #set page(paper: "a4", margin: 2cm)
+// #set page(paper: "a4", margin: (x: 20mm, y: 5mm))
 // #set heading(numbering: "1.")
 
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
@@ -36,24 +36,6 @@
 #show heading.where(level: 1): set text(weight: "bold")
 #show heading.where(level: 1): set text(fill: emerald-800)
 #show heading.where(level: 2): set text(fill: emerald-800)
-
-// #context if target() == "html" or target() == "bundle" {
-//   html.elem(
-//     "style",
-//     ```css
-//     .grid {
-//       max-width: 100%;
-//       overflow-x:auto;
-//     }
-//     ```.text,
-//   )
-// }
-
-// #show grid: it => if target() == "html" or target() == "bundle" {
-//   html.elem("div", attrs:(class: "svg-graph"), html.frame(it))
-// } else { it }
-
-// #outline()
 
 
 // #html.elem(
@@ -636,20 +618,67 @@
 
   下图是一次心脏除颤器的模拟治疗，该心脏除颤器的电容器电容为 15 μF，如果充电后电容器的电压为 4.0 kV，电容器在一定时间内放电至两极板之间的电压为 0，这次放电有多少电荷量通过人体组织？
   #set align(center)
-  #image("./assets/心脏除颤器.png", width: 40%)
+  #image("/assets/心脏除颤器.png", width: 40%)
 ])[
   电荷量：$Q = C * U = 0.06 "C"$
 ]
 
 == 带电粒子在电场中的运动
 
-#exercise(name:[
-如图 10.5-1 甲，某装置中，多个横截面积相同的金属圆筒依次排列，其中心轴线在同一直线上，圆筒的长度依照一定的规律依次增加。序号为奇数的圆筒和交流电源的一个极相连，序号为偶数的圆筒和该电源的另一个极相连。
+#exercise(name: [
+  如图 10.5-1 甲，某装置中，多个横截面积相同的金属圆筒依次排列，其中心轴线在同一直线上，圆筒的长度依照一定的规律依次增加。序号为奇数的圆筒和交流电源的一个极相连，序号为偶数的圆筒和该电源的另一个极相连。
 
-交流电源两极间电势差的变化规律如图 10.5-1 乙所示。在 t ＝ 0 时，奇数圆筒相对偶数圆筒的电势差为正值，此时位于和偶数圆筒相连的金属圆板（序号为 0）中央
-的一个电子，在圆板和圆筒 1 之间的电场中由静止开始加速，沿中心轴线冲进圆筒 1。
+  交流电源两极间电势差的变化规律如图 10.5-1 乙所示。在 t ＝ 0 时，奇数圆筒相对偶数圆筒的电势差为正值，此时位于和偶数圆筒相连的金属圆板（序号为 0）中央
+  的一个电子，在圆板和圆筒 1 之间的电场中由静止开始加速，沿中心轴线冲进圆筒 1。
 
-为使电子运动到圆筒与圆筒之间各个间隙中都能恰好使静电力的方向跟运动方向相同而不断加速，圆筒长度的设计必须遵照一定的规律。若已知电子的质量为 m、电子电荷量为 e、电压的绝对值为 u、周期为 T，电子通过圆筒间隙的时间可以忽略不计。则金属圆筒的长度和它的序号之间有什么定量关系？第 n 个金属圆筒的长度应该是多少？
+  为使电子运动到圆筒与圆筒之间各个间隙中都能恰好使静电力的方向跟运动方向相同而不断加速，圆筒长度的设计必须遵照一定的规律。若已知电子的质量为 m、电子电荷量为 e、电压的绝对值为 u、周期为 T，电子通过圆筒间隙的时间可以忽略不计。则金属圆筒的长度和它的序号之间有什么定量关系？第 n 个金属圆筒的长度应该是多少？
 ])[
-  
+  #set align(center)
+  #image("/assets/直线加速器.png")
+  #set align(left)
+
+  分析： 如图 10.5-1，由于金属导体内部的电场强度等于 0，电子在各个金属圆筒内部都不受静电力的作用，它在圆筒内的运动是匀速直线运动，只是在相邻圆筒的间隙中才会被加速。
+
+  为使电子运动到圆筒与圆筒之间各个间隙中都能恰好使静电力的方向跟运动方向相同而不断加速，这是否意味着电子在每个圆筒中的运动时间必须与交流电的变化规律保持一致，具体而言：
+
+  - 在第 1 个圆筒中，电子的运动时间为 $t(1) = T \/ 4$
+  - 在之后的所有圆筒中，电子的运动时间都为 $t(n) = T \/ 2$
+
+  根据能量守恒定理，在每个间隙处电子获得的动能的增量都来自于静电力做功。
+
+  在第 n 个圆筒的开始位置
+  - 电子的动能为： $E_k (n) = n e u$
+  - 电子的速度为： $v(n) = sqrt((2 n e u)/m)$
+
+  则第 n 个圆筒的长度为：
+  $
+    L(n) = v(n) * t(n) = cases(sqrt((2 e u) / m) * T /4 #h(1cm) &n=1, sqrt((2 n e u) / m) * T /2 #h(1cm) &n in NN^+ "且" n >= 2)
+  $
+]
+
+#exercise(name: [
+  如图10.5-2，两相同极板A 与B的长度l 为 6.0 cm，相距d为2 cm，极板间的电压U为200 V。一个电子沿平行于板面的方向射入电场中，射入时的速度 $v_0$ 为 $3.0×10^7$ m/s。把两板间的电场看作匀强电场，求电子射出电场时沿垂直于板面方向偏移的距离 y 和偏转的角度 θ。
+])[
+  #set align(center)
+  #image("/assets/带电粒子在电场中的偏转.png", width: 50%)
+  #set align(left)
+
+电场强度：$E = U/d$，方向为竖直向下。
+
+电子所受静电力为：$F = e * E$，方向为竖直向上。
+
+电子在水平方向的速度分量为：$v_x = v_0$，射出电场所需时间为：$t = l / v_0$
+
+电子在y方向是匀变速直线运动，速度分量为：$v_y = a t = (e E)/m t = (e U t)/(m d)$
+
+
+电子射出电场时，在y方向的偏转距离为：
+$ y &= 1/2 a t^2 = 1/2 (e E)/m t^2 = 1/2 (e E l^2)/(m v_0^2) = 1/2 (e U l^2)/(m d v_0^2) = 0.35 "cm" $
+
+电子射出电场时的偏转角为：
+$ theta = arctan(v_y / v_x) = arctan((e U l)/(m d v_0^2)) = 6.7 degree $
+
+#let y = 1/2 * (elementary-charge.val * 200 * calc.pow(6e-2,2) )/ (electron-mass.val * 2e-2 * calc.pow(3e7,2))
+
+#let theta- = calc.atan(elementary-charge.val * 200 * 6e-2/(electron-mass.val * 2e-2 * calc.pow(3e7,2)))
 ]
