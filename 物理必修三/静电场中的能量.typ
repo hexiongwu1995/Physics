@@ -1,7 +1,7 @@
 
 #import "@preview/typewind:0.2.0": *
 
-// #import "@preview/itemplate:0.5.0": *
+// #import "@local/itemplate:0.5.0": *
 // #show: itemplate.with(doc-title: "静电场中的能量")
 
 #import "@preview/theoframe:0.4.2": *

@@ -506,18 +506,13 @@ article a {
     display: none;
   }
 
+  /* 已由小屏触摸滑动手势取代，隐藏 .icon-menu3 */
   .icon-menu3 {
-    display: block;
+    display: none;
     position: fixed;
     z-index: 100;
     right: 40px;
     bottom: 100px;
-  }
-
-  .icon-menu3:hover {
-    transform: rotateX(180deg);
-    transition: transform 0.3s ease;
-    cursor: pointer;
   }
 }
 
@@ -870,6 +865,47 @@ function smallScreenToggleAside() {
   }
 }
 
+// 小屏状态下 手指右滑滑出侧边栏，左滑收起侧边栏
+function touchSwipeAside() {
+  const aside = document.querySelector("aside");
+  const overlay = document.querySelector(".overlay");
+  if (!aside || !overlay) return;
+
+  const mediaQuery = window.matchMedia("(max-width: 1000px)");
+  const swipeThreshold = 50;
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+
+  document.addEventListener("touchstart", (e) => {
+    if (!mediaQuery.matches || e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive: true });
+
+  document.addEventListener("touchend", (e) => {
+    if (!tracking) return;
+    tracking = false;
+
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+
+    // 水平位移足够大且以水平为主时才视为有效滑动
+    if (Math.abs(dx) < swipeThreshold || Math.abs(dx) <= Math.abs(dy)) return;
+
+    if (dx > 0 && !aside.classList.contains("show")) {
+      // 右滑：滑出侧边栏
+      aside.classList.add("show");
+      overlay.classList.add("show");
+    } else if (dx < 0 && aside.classList.contains("show")) {
+      // 左滑：收起侧边栏
+      aside.classList.remove("show");
+      overlay.classList.remove("show");
+    }
+  }, { passive: true });
+}
+
 // 侧边栏宽度调整
 function adjustAsideWidth() {
   const root = document.documentElement;
@@ -940,6 +976,8 @@ function initializeApp() {
   console.log("开始监听大屏状态下侧边栏显示/隐藏的切换按钮");
   smallScreenToggleAside();
   console.log("开始监听小屏状态下侧边栏显示/隐藏的切换按钮");
+  touchSwipeAside();
+  console.log("开始监听小屏状态下侧边栏的触摸滑动手势");
   adjustAsideWidth();
   console.log("开始监听侧边栏宽度调整的resizeHandle");
 }
