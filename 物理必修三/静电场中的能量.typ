@@ -8,8 +8,6 @@
 #show: theoframe-setup.with(theme: (style: "box", color: emerald-800))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
-
-
 #import "@preview/cetz:0.5.2"
 
 #import "@preview/zap:0.6.0"

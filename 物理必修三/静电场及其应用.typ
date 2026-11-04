@@ -2,7 +2,7 @@
 // #import "@local/itemplate:0.5.0": *
 // #show: itemplate.with(doc-title: "静电场及其应用")
 
-#import "@local/theoframe:0.4.2": *
+#import "@preview/theoframe:0.4.2": *
 #show: theoframe-setup.with(theme: (style: "box", color: rgb("#067300")))
 #show heading.where(level: 2): h2 => reset-fig-counter-per-heading(h2)
 
@@ -20,7 +20,8 @@
 #set text(lang: "zh")
 // #set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))
 // #set page(paper: "a4", margin: 2cm)
-// #set heading(numbering: "1.")
+
+#set heading(numbering: none )
 
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
 // #show math.equation.where(block: true): set align(left)

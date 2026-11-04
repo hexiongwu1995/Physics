@@ -877,8 +877,26 @@ function touchSwipeAside() {
   let startY = 0;
   let tracking = false;
 
+  // 判断触摸起点是否位于可横向滚动的容器（如长公式、代码块）或 canvas 内
+  // 若是，则该区域的手势留给元素自身的横向滚动，不触发侧边栏滑动手势
+  function isInScrollableArea(target) {
+    let el = target instanceof Element ? target : null;
+    while (el && el !== document.body) {
+      if (el instanceof HTMLCanvasElement) return true;
+      const style = getComputedStyle(el);
+      const overflowX = style.overflowX;
+      if ((overflowX === "auto" || overflowX === "scroll" || overflowX === "overlay") &&
+          el.scrollWidth > el.clientWidth + 1) {
+        return true;
+      }
+      el = el.parentElement;
+    }
+    return false;
+  }
+
   document.addEventListener("touchstart", (e) => {
     if (!mediaQuery.matches || e.touches.length !== 1) return;
+    if (isInScrollableArea(e.target)) return;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     tracking = true;
