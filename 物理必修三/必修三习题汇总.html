@@ -6,43 +6,31 @@
     "fundamental-physical-constants": "https://unpkg.com/fundamental-physical-constants/FundamentalPhysicalConstants.js"
   }
 }</script><style>  :root {
-    /*  --enable-numbering: true;
-        --all-expanded: false; */
 
     --aside-width: 320px;
     --header-height: 60px;
     --article-height: calc(100vh - var(--header-height));
 
     --aside-title-height: 60px;
-    /* --function-panel-height: 60px;
-       --aside-nav-height: calc(100vh - var(--aside-title-height) - var(--function-panel-height)); */
     --aside-nav-height: calc(100vh - var(--aside-title-height));
 
     --level-1-height: 40px;
     --level-others-height: 30px;
 
     --aside-title-padding: 10px 20px;
-    /* --aside-function-item-padding: 10px 20px 10px 20px; */
     --toc-root-level-1-padding: 10px 20px 10px 20px;
     --toc-root-level-2-padding: 10px 20px 10px 30px;
     --toc-root-level-3-padding: 10px 20px 10px 40px;
 
     --aside-bag: #f5f2ed;
     --aside-title-bag: #ede8dffb;
-    /* --function-item-bag: transparent; */
-    /* --aside-icon-bag: transparent; */
 
     --aside-title-hover-bag: #eee5d3;
-    /* --aside-function-item-hover-bag: #eee5d3; */
     --toc-root-a-hover-bag: #eee5d3;
     --resize-handle-hover-bag: #dfb663;
 
     --aside-title-font-color: #924d0ca9;
-    /* --aside-normal-font-color: #2d2d2d; */
-    /* --aside-function-item-font-color: #69390963; */
     --toc-root-a-font-color: #542d06;
-
-    /* --aside-divider-color: #eae5defe; */
 
     --main-bag: #fffefc;
     --header-bag: #fffefc;
@@ -57,12 +45,8 @@
     --header-title-font-color: #aeaeae;
     --header-icon-font-color: #b0b0b0;
 
-    /* --active-font-color: #0574ea; */
-
     --aside-title-font-size: 1.2rem;
-    /* --aside-function-icon-font-size: 1rem; */
-    /* --aside-function-text-font-size: 0.8rem; */
-    /* --toc-root-a-line-height: 1.5rem; */
+
     --toc-root-a-level-1-font-size: 1rem;
     --toc-root-a-others-font-size: 1rem;
     --toc-root-arrow-font-size: 1.2rem;
@@ -197,46 +181,6 @@ aside.hidden {
     background-color: var(--resize-handle-hover-bag);
     cursor: col-resize;
 }
-
-/* .function-panel {
-    width: 100%;
-    height: var(--function-panel-height);
-    border-bottom: 2px solid var(--aside-divider-color);
-    background-color: transparent;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-} */
-
-/* .icon-Numbering,
-.icon-expand-all {
-    width: 50%;
-    height: 100%;
-    padding: var(--aside-function-item-padding);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 20px;
-    background-color: transparent;
-    color: var(--aside-function-item-font-color);
-    font-size: var(--aside-function-icon-font-size);
-    overflow: hidden;
-} */
-
-/* .icon-Numbering .numbering-text,
-.icon-expand-all .expand-all-text {
-    font-size: var(--aside-function-text-font-size);
-} */
-
-/* .icon-Numbering:hover,
-.icon-expand-all:hover {
-    background-color: var(--aside-function-item-hover-bag);
-    cursor: pointer;
-} */
 
 nav {
     width: 100%;
@@ -486,18 +430,7 @@ article a {
         display: none;
     }
 
-    /* 已由小屏触摸滑动手势取代，隐藏 .icon-menu3 */
-    /* .icon-menu3 {
-        display: none;
-        position: fixed;
-        z-index: 100;
-        right: 40px;
-        bottom: 100px;
-    } */
-
-}
-
-
+  }
 
 /* 标题跳转时留出 header 高度 + 缓冲间距，防止被遮挡 */
 article :is(h1, h2, h3, h4, h5, h6) {
@@ -505,15 +438,6 @@ article :is(h1, h2, h3, h4, h5, h6) {
 }
 
 /* highlight.css */
-
-/* div.highlight {
-    width: 90%;
-    padding: 10px 15px;
-    margin: 2rem 0;
-    border-left: 3px solid #b8b8b8;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-} */
 
 table {
     width: 90%;
@@ -758,27 +682,27 @@ function largeScreenToggleAside() {
 }
 
 // 小屏状态下 显示/隐藏 侧边栏
-function smallScreenToggleAside() {
-  const aside = document.querySelector("aside");
-  const iconMenu3 = document.querySelector(".icon-menu3");
-  const overlay = document.querySelector(".overlay");
+// function smallScreenToggleAside() {
+//   const aside = document.querySelector("aside");
+//   const iconMenu3 = document.querySelector(".icon-menu3");
+//   const overlay = document.querySelector(".overlay");
 
-  if (iconMenu3) {
-    iconMenu3.addEventListener("click", () => {
-      iconMenu3.classList.toggle("show");
-      aside.classList.toggle("show");
-      overlay.classList.toggle("show");
-    });
-  }
+//   if (iconMenu3) {
+//     iconMenu3.addEventListener("click", () => {
+//       iconMenu3.classList.toggle("show");
+//       aside.classList.toggle("show");
+//       overlay.classList.toggle("show");
+//     });
+//   }
 
-  if (overlay) {
-    overlay.addEventListener("click", () => {
-      iconMenu3.classList.remove("show");
-      aside.classList.remove("show");
-      overlay.classList.remove("show");
-    });
-  }
-}
+//   if (overlay) {
+//     overlay.addEventListener("click", () => {
+//       iconMenu3.classList.remove("show");
+//       aside.classList.remove("show");
+//       overlay.classList.remove("show");
+//     });
+//   }
+// }
 
 // 小屏状态下 手指右滑滑出侧边栏，左滑收起侧边栏
 function touchSwipeAside() {
