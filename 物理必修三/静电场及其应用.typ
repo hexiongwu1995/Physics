@@ -21,11 +21,12 @@
 // #set page(width:10cm, height:20cm, margin: (x:0.5cm,y:1cm))
 // #set page(paper: "a4", margin: 2cm)
 
-#set heading(numbering: none )
+// #set heading(numbering: none )
 
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
 // #show math.equation.where(block: true): set align(left)
 
+#set heading(numbering:"1.")
 #show heading.where(level: 1): set text(weight: "bold")
 #show heading.where(level: 2): set text(fill: rgb("#076b07"))
 // #outline()

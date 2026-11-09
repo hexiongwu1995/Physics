@@ -30,6 +30,8 @@
 // #show math.equation.where(block: true): pad.with(bottom:0.1em)
 // #show math.equation.where(block: true): set align(left)
 
+#set heading(numbering:"1.")
+
 #show heading.where(level: 1): set text(weight: "bold")
 #show heading.where(level: 1): set text(fill: emerald-800)
 #show heading.where(level: 2): set text(fill: emerald-800)
