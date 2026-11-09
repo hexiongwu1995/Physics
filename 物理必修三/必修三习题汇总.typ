@@ -1,7 +1,7 @@
 
 // #show heading: set heading(numbering: none)
 
-#import "@local/itemplate:0.6.0": *
+#import "@local/itemplate:0.7.0": *
 #show: itemplate.with(doc-title: "必修三习题汇总")
 
 // #import "@local/myutils:0.1.0": *
