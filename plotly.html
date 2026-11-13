@@ -34,7 +34,7 @@
         }
         Plotly.newPlot('chart', [{
             type: 'surface', x: X, y: Y, z: Z, colorscale: 'Greys',
-            colorbar: { len: 0.8 }
+            showscale: false
         }], {
             title: 'z = sin(√(x²+y²))',
             scene: {
