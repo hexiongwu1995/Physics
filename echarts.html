@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 嵌入示例</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "echarts": "https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.esm.min.js",
+                "echarts-gl": "https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <p> 这是一个 ECharts 图表嵌入示例。</p>
+    <div id="chart" style="width:95%; aspect-ratio: 1; max-width:800px"></div>
+    <script type="module">
+        import * as echarts from 'echarts';
+
+        // echarts-gl 只有 UMD 构建，会从全局读取 echarts，需先挂载再动态引入
+        window.echarts = echarts;
+        await import('echarts-gl');
+
+        const chart = echarts.init(document.getElementById('chart'));
+        const n = 60, lo = -5, hi = 5;
+        const data = [];
+        for (let i = 0; i < n; i++) {
+            const x = lo + i * (hi - lo) / (n - 1);
+            for (let j = 0; j < n; j++) {
+                const y = lo + j * (hi - lo) / (n - 1);
+                data.push([x, y, Math.sin(Math.sqrt(x * x + y * y))]);
+            }
+        }
+        chart.setOption({
+            title: { text: 'z = sin(√(x²+y²))', left: 'center' },
+            visualMap: {
+                show: false,
+                dimension: 2,
+                min: -1,
+                max: 1,
+                inRange: { color: ['#000000', '#ffffff'] }
+            },
+            xAxis3D: { type: 'value', min: -5, max: 5 },
+            yAxis3D: { type: 'value', min: -5, max: 5 },
+            zAxis3D: { type: 'value', min: -5, max: 5 },
+            grid3D: {
+                viewControl: {
+                    projection: 'orthographic'
+                }
+            },
+            series: [{
+                type: 'surface',
+                data: data,
+                shading: 'lambert'
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    </script>
+</body>
+
+</html>
