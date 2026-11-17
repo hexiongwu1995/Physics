@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff"><meta name="author" content="hexiongwu"><title>必修三习题汇总</title><script>try {
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#262625" media="(prefers-color-scheme: dark)"><meta name="author" content="hexiongwu"><title>必修三习题汇总</title><script>try {
   if (localStorage.getItem("itemplate:sidebar-open") === "0") {
     document.documentElement.classList.add("sidebar-preclosed");
   }
   var savedTheme = localStorage.getItem("itemplate:theme");
-  if (savedTheme === "default" || savedTheme === "light" || savedTheme === "dark" || savedTheme === "green") {
+  if (savedTheme === "default" || savedTheme === "paper" || savedTheme === "dark" || savedTheme === "green") {
     document.documentElement.dataset.theme = savedTheme;
   }
 } catch (error) {}</script><link rel="preconnect" href="https://fonts.googleapis.cn"><link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin="anonymous"><link rel="stylesheet" href="https://fonts.googleapis.cn/css2?family=STIX+Two+Math&amp;display=swap"><script type="importmap">{
@@ -37,7 +37,7 @@
   --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
   --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
   --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
-}</style><style>:root[data-theme='light'] {
+}</style><style>:root[data-theme='paper'] {
   --bg: #faf9f5;
   --surface: #f5f4ed;
   --surface-strong: #ece9df;
@@ -100,6 +100,29 @@
   --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
   --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
   --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
+}</style><style>@media (prefers-color-scheme: dark) {
+:root:not([data-theme]) {
+  --bg: #262625;
+  --surface: #2c2c2a;
+  --surface-strong: #34332e;
+  --ink: #f2f0e9;
+  --ink-muted: #b8b6a9;
+  --ink-faint: #95948a;
+  --line: rgba(255, 255, 255, 0.10);
+  --line-strong: rgba(255, 255, 255, 0.20);
+  --accent: #d97757;
+  --accent-soft: rgba(217, 119, 87, 0.14);
+  --accent-ink: #e6906f;
+  --sidebar-bg: #1f1f1e;
+  --header-bg: rgba(38, 38, 37, 0.86);
+  --code-bg: #2c2c2a;
+  --selection: rgba(217, 119, 87, 0.35);
+  --overlay: rgba(0, 0, 0, 0.56);
+  --font-ui: "Inter", "Source Sans 3", "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+  --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
+  --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
+}
 }</style><style>:root {
   --sidebar-w: 300px;
   --header-h: 58px;
@@ -113,9 +136,13 @@
 }
 
 :root[data-theme="default"],
-:root[data-theme="light"],
+:root[data-theme="paper"],
 :root[data-theme="green"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { color-scheme: dark; }
+}
 
 @supports (height: 100dvh) {
   :root { --app-h: 100dvh; }
@@ -904,7 +931,7 @@ html.drawer-open body { overflow: hidden; }
   }
 }</style><script type="module">const ui = {
   "themeDefault": "默认",
-  "themeLight": "浅色",
+  "themePaper": "纸张",
   "themeGreen": "浅绿",
   "themeDark": "深色",
   "themeCurrent": "切换主题（当前：{name}）",
@@ -935,19 +962,21 @@ function read(key) {
   try { return localStorage.getItem(key); } catch (error) { return null; }
 }
 
-/* Theme switching: default → light → green → dark */
+/* Theme switching: default → paper → green → dark. Without a saved choice,
+   the page follows the system preference (light → default, dark → dark). */
 
 const themeToggle = document.getElementById("theme-toggle");
-const themeOrder = ["default", "light", "green", "dark"];
+const themeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const themeOrder = ["default", "paper", "green", "dark"];
 const themeNames = {
   default: ui.themeDefault,
-  light: ui.themeLight,
+  paper: ui.themePaper,
   green: ui.themeGreen,
   dark: ui.themeDark,
 };
 
 function effectiveTheme() {
-  return docEl.dataset.theme || "default";
+  return docEl.dataset.theme || (themeQuery.matches ? "dark" : "default");
 }
 
 function syncThemeButton() {
@@ -967,6 +996,10 @@ if (themeToggle) {
   });
   syncThemeButton();
 }
+
+/* Keep the button label in sync when the system preference changes and the
+   reader has not chosen a theme explicitly. */
+themeQuery.addEventListener("change", syncThemeButton);
 
 /* Mobile: show the topbar only at the top of the document, so the content
    keeps the full viewport once the reader starts scrolling. */
