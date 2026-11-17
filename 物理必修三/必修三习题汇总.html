@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#262625" media="(prefers-color-scheme: dark)"><meta name="author" content="hexiongwu"><title>必修三习题汇总</title><script>try {
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff"><meta name="author" content="hexiongwu"><title>必修三习题汇总</title><script>try {
   if (localStorage.getItem("itemplate:sidebar-open") === "0") {
     document.documentElement.classList.add("sidebar-preclosed");
   }
@@ -100,29 +100,6 @@
   --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
   --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
   --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
-}</style><style>@media (prefers-color-scheme: dark) {
-:root:not([data-theme]) {
-  --bg: #262625;
-  --surface: #2c2c2a;
-  --surface-strong: #34332e;
-  --ink: #f2f0e9;
-  --ink-muted: #b8b6a9;
-  --ink-faint: #95948a;
-  --line: rgba(255, 255, 255, 0.10);
-  --line-strong: rgba(255, 255, 255, 0.20);
-  --accent: #d97757;
-  --accent-soft: rgba(217, 119, 87, 0.14);
-  --accent-ink: #e6906f;
-  --sidebar-bg: #1f1f1e;
-  --header-bg: rgba(38, 38, 37, 0.86);
-  --code-bg: #2c2c2a;
-  --selection: rgba(217, 119, 87, 0.35);
-  --overlay: rgba(0, 0, 0, 0.56);
-  --font-ui: "Inter", "Source Sans 3", "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
-  --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
-  --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
-  --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
-}
 }</style><style>:root {
   --sidebar-w: 300px;
   --header-h: 58px;
@@ -139,10 +116,6 @@
 :root[data-theme="paper"],
 :root[data-theme="green"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) { color-scheme: dark; }
-}
 
 @supports (height: 100dvh) {
   :root { --app-h: 100dvh; }
@@ -835,9 +808,13 @@ html.drawer-open body { overflow: hidden; }
 
   .mobile-only { display: grid; }
   .resize-handle { display: none; }
-  .sidebar-head { padding-top: 9px; padding-bottom: 9px; }
+  .sidebar-head {
+    min-height: calc(var(--header-h) + 1px + env(safe-area-inset-top));
+    padding-top: calc(9px + env(safe-area-inset-top));
+    padding-bottom: 9px;
+  }
   .topbar {
-    height: calc(59px + env(safe-area-inset-top));
+    height: calc(var(--header-h) + 1px + env(safe-area-inset-top));
     padding-right: 12px;
     padding-left: 12px;
     overflow: hidden;
@@ -962,11 +939,11 @@ function read(key) {
   try { return localStorage.getItem(key); } catch (error) { return null; }
 }
 
-/* Theme switching: default → paper → green → dark. Without a saved choice,
-   the page follows the system preference (light → default, dark → dark). */
+/* Theme switching: default → paper → green → dark. The default theme is
+   used until the reader selects another theme. */
 
 const themeToggle = document.getElementById("theme-toggle");
-const themeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 const themeOrder = ["default", "paper", "green", "dark"];
 const themeNames = {
   default: ui.themeDefault,
@@ -976,7 +953,7 @@ const themeNames = {
 };
 
 function effectiveTheme() {
-  return docEl.dataset.theme || (themeQuery.matches ? "dark" : "default");
+  return docEl.dataset.theme || "default";
 }
 
 function syncThemeButton() {
@@ -987,19 +964,23 @@ function syncThemeButton() {
   themeToggle.setAttribute("title", label);
 }
 
+function syncThemeColor() {
+  if (!themeColorMeta) return;
+  const bg = getComputedStyle(docEl).getPropertyValue("--bg").trim();
+  if (bg) themeColorMeta.setAttribute("content", bg);
+}
+
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     const next = themeOrder[(themeOrder.indexOf(effectiveTheme()) + 1) % themeOrder.length];
     docEl.dataset.theme = next;
     store("itemplate:theme", next);
     syncThemeButton();
+    syncThemeColor();
   });
   syncThemeButton();
+  syncThemeColor();
 }
-
-/* Keep the button label in sync when the system preference changes and the
-   reader has not chosen a theme explicitly. */
-themeQuery.addEventListener("change", syncThemeButton);
 
 /* Mobile: show the topbar only at the top of the document, so the content
    keeps the full viewport once the reader starts scrolling. */
