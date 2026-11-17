@@ -102,7 +102,7 @@
   --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
 }</style><style>:root {
   --sidebar-w: 300px;
-  --header-h: 64px;
+  --header-h: 58px;
   --app-h: 100vh;
   --radius-sm: 4px;
   --radius: 8px;
@@ -201,7 +201,8 @@ html.sidebar-preclosed .sidebar { border-right-color: transparent; }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 20px 20px 14px;
+  min-height: var(--header-h);
+  padding: 19px 20px 14px;
   border-bottom: 1px solid var(--line);
 }
 .sidebar-heading { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -346,7 +347,7 @@ html.sidebar-preclosed .sidebar { border-right-color: transparent; }
   justify-content: space-between;
   gap: 16px;
   min-height: calc(var(--header-h) + env(safe-area-inset-top));
-  padding: calc(10px + env(safe-area-inset-top)) 24px 10px;
+  padding: calc(9px + env(safe-area-inset-top)) 24px 9px;
   border-bottom: 1px solid var(--line);
   background: var(--header-bg);
   backdrop-filter: blur(14px);
@@ -807,7 +808,36 @@ html.drawer-open body { overflow: hidden; }
 
   .mobile-only { display: grid; }
   .resize-handle { display: none; }
-  .topbar { padding-right: 12px; padding-left: 12px; }
+  .sidebar-head { padding-top: 9px; padding-bottom: 9px; }
+  .topbar {
+    height: calc(59px + env(safe-area-inset-top));
+    padding-right: 12px;
+    padding-left: 12px;
+    overflow: hidden;
+    transition:
+      height var(--dur) var(--ease),
+      padding var(--dur) var(--ease),
+      opacity .2s,
+      border-bottom-width var(--dur) var(--ease),
+      visibility 0s;
+  }
+  /* On small screens the topbar is only shown at the very top of the
+     document, so the content gets the full viewport while scrolling. */
+  .main.topbar-hidden .topbar {
+    height: 0;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom-width: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      height var(--dur) var(--ease),
+      padding var(--dur) var(--ease),
+      opacity .2s,
+      border-bottom-width var(--dur) var(--ease),
+      visibility 0s var(--dur);
+  }
   .icon-btn { width: 40px; height: 40px; }
   .article { padding: 36px 20px 110px; }
 }
@@ -938,6 +968,14 @@ if (themeToggle) {
   syncThemeButton();
 }
 
+/* Mobile: show the topbar only at the top of the document, so the content
+   keeps the full viewport once the reader starts scrolling. */
+
+function syncTopbar() {
+  if (!mainEl || !content) return;
+  mainEl.classList.toggle("topbar-hidden", isMobile() && content.scrollTop > 0);
+}
+
 function sidebarIsOpen() {
   if (!shell) return false;
   return isMobile()
@@ -1012,6 +1050,7 @@ mq.addEventListener("change", () => {
   shell.dataset.drawer = "closed";
   docEl.classList.remove("drawer-open");
   syncSidebarA11y();
+  syncTopbar();
   requestAnimationFrame(refreshAllTables);
 });
 
@@ -1190,6 +1229,7 @@ function scheduleActiveHeading() {
 }
 
 if (content) {
+  content.addEventListener("scroll", syncTopbar, { passive: true });
   content.addEventListener("scroll", () => {
     if (spyLocked) {
       // 平滑滚动途中锁定高亮，抵达目标落点后立即恢复 scrollspy
@@ -1207,8 +1247,10 @@ if (content) {
   });
 }
 window.addEventListener("resize", scheduleActiveHeading);
+window.addEventListener("resize", syncTopbar);
 collectHeadings();
 scheduleActiveHeading();
+syncTopbar();
 
 if (location.hash.length > 1) {
   const id = location.hash.slice(1);
