@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#faf9f5" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#262625" media="(prefers-color-scheme: dark)"><meta name="author" content="hexiongwu"><title>必修三习题汇总</title><script>try {
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff"><meta name="author" content="hexiongwu"><title>必修三习题汇总</title><script>try {
   if (localStorage.getItem("itemplate:sidebar-open") === "0") {
     document.documentElement.classList.add("sidebar-preclosed");
   }
   var savedTheme = localStorage.getItem("itemplate:theme");
-  if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "green") {
+  if (savedTheme === "default" || savedTheme === "light" || savedTheme === "dark" || savedTheme === "green") {
     document.documentElement.dataset.theme = savedTheme;
   }
 } catch (error) {}</script><link rel="preconnect" href="https://fonts.googleapis.cn"><link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin="anonymous"><link rel="stylesheet" href="https://fonts.googleapis.cn/css2?family=STIX+Two+Math&amp;display=swap"><script type="importmap">{
@@ -17,6 +17,27 @@
     "echarts-gl": "https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"
   }
 }</script><style>:root {
+  --bg: #ffffff;
+  --surface: #fafafa;
+  --surface-strong: #e6e6e6;
+  --ink: #000000;
+  --ink-muted: #5f5f5f;
+  --ink-faint: #6f6f6f;
+  --line: rgba(0, 0, 0, 0.12);
+  --line-strong: rgba(0, 0, 0, 0.24);
+  --accent: #20609f;
+  --accent-soft: rgba(32, 96, 159, 0.10);
+  --accent-ink: #1a4f83;
+  --sidebar-bg: #fafafa;
+  --header-bg: rgba(255, 255, 255, 0.86);
+  --code-bg: #f5f5f5;
+  --selection: rgba(125, 185, 222, 0.63);
+  --overlay: rgba(0, 0, 0, 0.32);
+  --font-ui: "Inter", "Source Sans 3", "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+  --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
+  --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
+}</style><style>:root[data-theme='light'] {
   --bg: #faf9f5;
   --surface: #f5f4ed;
   --surface-strong: #ece9df;
@@ -79,29 +100,6 @@
   --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
   --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
   --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
-}</style><style>@media (prefers-color-scheme: dark) {
-:root:not([data-theme]) {
-  --bg: #262625;
-  --surface: #2c2c2a;
-  --surface-strong: #34332e;
-  --ink: #f2f0e9;
-  --ink-muted: #b8b6a9;
-  --ink-faint: #95948a;
-  --line: rgba(255, 255, 255, 0.10);
-  --line-strong: rgba(255, 255, 255, 0.20);
-  --accent: #d97757;
-  --accent-soft: rgba(217, 119, 87, 0.14);
-  --accent-ink: #e6906f;
-  --sidebar-bg: #1f1f1e;
-  --header-bg: rgba(38, 38, 37, 0.86);
-  --code-bg: #2c2c2a;
-  --selection: rgba(217, 119, 87, 0.35);
-  --overlay: rgba(0, 0, 0, 0.56);
-  --font-ui: "Inter", "Source Sans 3", "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
-  --font-serif: "Source Serif 4", "Source Serif Pro", Charter, Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
-  --font-mono: "JetBrains Mono", "Maple Mono NF CN", "Cascadia Code", "SF Mono", Consolas, monospace;
-  --font-math: "STIX Two Math", "NewComputerModernMath", "Latin Modern Math", math;
-}
 }</style><style>:root {
   --sidebar-w: 300px;
   --header-h: 64px;
@@ -111,9 +109,10 @@
   --radius-lg: 12px;
   --ease: cubic-bezier(.32, .72, 0, 1);
   --dur: .28s;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
+:root[data-theme="default"],
 :root[data-theme="light"],
 :root[data-theme="green"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
@@ -874,6 +873,7 @@ html.drawer-open body { overflow: hidden; }
     animation-iteration-count: 1 !important;
   }
 }</style><script type="module">const ui = {
+  "themeDefault": "默认",
   "themeLight": "浅色",
   "themeGreen": "浅绿",
   "themeDark": "深色",
@@ -905,24 +905,24 @@ function read(key) {
   try { return localStorage.getItem(key); } catch (error) { return null; }
 }
 
-/* Theme switching: light → green → dark */
+/* Theme switching: default → light → green → dark */
 
 const themeToggle = document.getElementById("theme-toggle");
-const themeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-const themeOrder = ["light", "green", "dark"];
+const themeOrder = ["default", "light", "green", "dark"];
 const themeNames = {
+  default: ui.themeDefault,
   light: ui.themeLight,
   green: ui.themeGreen,
   dark: ui.themeDark,
 };
 
 function effectiveTheme() {
-  return docEl.dataset.theme || (themeQuery.matches ? "dark" : "light");
+  return docEl.dataset.theme || "default";
 }
 
 function syncThemeButton() {
   if (!themeToggle) return;
-  const name = themeNames[effectiveTheme()] || themeNames.light;
+  const name = themeNames[effectiveTheme()] || themeNames.default;
   const label = ui.themeCurrent.replace("{name}", name);
   themeToggle.setAttribute("aria-label", label);
   themeToggle.setAttribute("title", label);
@@ -937,8 +937,6 @@ if (themeToggle) {
   });
   syncThemeButton();
 }
-
-themeQuery.addEventListener("change", syncThemeButton);
 
 function sidebarIsOpen() {
   if (!shell) return false;
